@@ -86,7 +86,7 @@ $pagination_page_size = $this->configuration->getValue('get.pagination_page_size
 <?php foreach ($primaryKeys as $primaryKey): ?>
     if (isset($params['<?php echo $primaryKey ?>']))
     {
-      $values = explode(',', $params['<?php echo $primaryKey ?>']);
+      $values = explode('<?php echo $this->configuration->getValue('default.separator', ',') ?>', $params['<?php echo $primaryKey ?>']);
 
       if (count($values) == 1)
       {
@@ -100,6 +100,26 @@ $pagination_page_size = $this->configuration->getValue('get.pagination_page_size
       unset($params['<?php echo $primaryKey ?>']);
     }
 
+<?php endforeach; ?>
+<?php $filters = $this->configuration->getFilters() ?>
+<?php foreach ($filters as $name => $filter): ?>
+<?php if (isset($filters[$name]['multiple']) && $filters[$name]['multiple']): ?>
+    if (isset($params['<?php echo $name ?>']))
+    {
+      $values = explode('<?php echo $this->configuration->getValue('default.separator', ',') ?>', $params['<?php echo $name ?>']);
+
+      if (count($values) == 1)
+      {
+        $q->andWhere($this->model.'.<?php echo $name ?> = ?', $values[0]);
+      }
+      else
+      {
+        $q->whereIn($this->model.'.<?php echo $name ?>', $values);
+      }
+
+      unset($params['<?php echo $name ?>']);
+    }
+<?php endif; ?>
 <?php endforeach; ?>
     foreach ($params as $name => $value)
     {

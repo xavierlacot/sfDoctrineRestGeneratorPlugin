@@ -16,9 +16,15 @@ class sfDoctrineRestGeneratorConfiguration
   protected function compile()
   {
     $this->configuration = array(
-      'get' => array(
+      'default' => array(
+        'fields'                      => $this->getFieldsDefault(),
+        'separator'                   => $this->getSeparator()
+      ),
+      'get'     => array(
         'display'                     => $this->getDisplay(),
         'embed_relations'             => $this->getEmbedRelations(),
+        'fields'                      => $this->getFieldsGet(),
+        'filters'                     => $this->getFilters(),
         'global_additional_fields'    => $this->getGlobalAdditionalFields(),
         'max_items'                   => $this->getMaxItems(),
         'object_additional_fields'    => $this->getObjectAdditionalFields(),

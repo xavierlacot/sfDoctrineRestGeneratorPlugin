@@ -72,6 +72,27 @@
     }
 <?php endif; ?>
 
+<?php $fields = $this->configuration->getValue('default.fields'); ?>
+<?php if (count($fields) > 0): ?>
+    foreach ($this->objects as $i => $object)
+    {
+<?php foreach ($fields as $field => $configuration): ?>
+      if (isset($object['<?php echo $field ?>']))
+      {
+<?php if (isset($configuration['date_format'])): ?>
+        $object['<?php echo $field ?>'] = date('<?php echo $configuration['date_format'] ?>', strtotime($object['<?php echo $field ?>']));
+<?php endif; ?>
+<?php if (isset($configuration['tag_name'])): ?>
+        $object['<?php echo $configuration['tag_name'] ?>'] = $object['<?php echo $field ?>'];
+        unset($object['<?php echo $field ?>']);
+<?php endif; ?>
+      }
+<?php endforeach; ?>
+
+      $this->objects[$i] = $object;
+    }
+<?php endif; ?>
+
     $this->xml = sfRestInflector::arrayToXml($this->objects, $this->model);
     unset($this->objects);
   }

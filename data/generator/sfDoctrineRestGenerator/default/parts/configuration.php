@@ -22,6 +22,8 @@ abstract class Base<?php echo ucfirst($this->getModuleName()) ?>GeneratorConfigu
 <?php unset($this->config['get']['embed_relations']) ?>
   }
 
+<?php include dirname(__FILE__).'/fieldsConfiguration.php' ?>
+
   public function getGlobalAdditionalFields()
   {
     return <?php echo $this->asPhp(isset($this->config['get']['global_additional_fields']) ? $this->config['get']['global_additional_fields'] : array()) ?>;
@@ -38,6 +40,12 @@ abstract class Base<?php echo ucfirst($this->getModuleName()) ?>GeneratorConfigu
   {
     return <?php echo $this->asPhp(isset($this->config['get']['object_additional_fields']) ? $this->config['get']['object_additional_fields'] : array()) ?>;
 <?php unset($this->config['get']['object_additional_fields']) ?>
+  }
+
+  public function getSeparator()
+  {
+    return <?php echo $this->asPhp(isset($this->config['default']['separator']) ? $this->config['default']['separator'] : ',') ?>;
+<?php unset($this->config['default']['separator']) ?>
   }
 
 <?php include dirname(__FILE__).'/paginationConfiguration.php' ?>

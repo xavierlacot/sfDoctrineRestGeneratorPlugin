@@ -4,6 +4,10 @@ generator:
     model_class:   ##MODEL_CLASS##
 
     config:
+      default:
+#        fields:                                 # list here the fields.
+#          created_at:                  { date_format: 'Y-m-d\TH:i:s', tag_name: 'created' }      # for instance
+#        separator:                     ','     # separator used for multiple filters
       get:
 #        display:                       []      # list here fields to render in the response
 #        embed_relations:               []      # list here relations to embed in the response
@@ -15,3 +19,5 @@ generator:
 #        pagination_page_size:          100     # the default number of items in a page
 #        sort_custom:                   false   # set to true to allow the client to pass a sort_by and a sort_order parameter
 #        sort_default:                  []      # set to [column, asc|desc] in order to sort on a column
+#        filters:                               # list here the filters
+#          created_at:                  { date_format: 'd-m-Y', multiple: true }  # for instance

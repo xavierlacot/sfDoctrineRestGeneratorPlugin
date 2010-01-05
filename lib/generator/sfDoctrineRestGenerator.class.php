@@ -388,6 +388,131 @@ class sfDoctrineRestGenerator extends sfGenerator
   }
 
   /**
+   * Returns the default configuration for fields.
+   *
+   * @return array An array of default configuration for all fields
+   */
+  public function getDefaultFieldsConfiguration()
+  {
+    $fields = array();
+    $names = array();
+
+    foreach ($this->getColumns() as $name => $column)
+    {
+      $name = $column->getName();
+      $names[] = $name;
+      $fields[$name] = isset($this->config['default']['fields'][$name]) ? $this->config['default']['fields'][$name] : array();
+    }
+
+    foreach ($this->getManyToManyTables() as $tables)
+    {
+      $name = sfInflector::underscore($tables['alias']).'_list';
+      $names[] = $name;
+      $fields[$name] = isset($this->config['default']['fields'][$name]) ? $this->config['default']['fields'][$name] : array();
+    }
+
+    if (isset($this->config['default']['fields']))
+    {
+      foreach ($this->config['default']['fields'] as $name => $params)
+      {
+        if (in_array($name, $names))
+        {
+          continue;
+        }
+
+        $fields[$name] = is_array($params) ? $params : array();
+      }
+    }
+
+    unset($this->config['default']['fields']);
+    return $fields;
+  }
+
+  /**
+   * Returns the default configuration for fields.
+   *
+   * @return array An array of default configuration for all fields
+   */
+  public function getFiltersConfiguration()
+  {
+    $fields = array();
+    $names = array();
+
+    foreach ($this->getColumns() as $name => $column)
+    {
+      $name = $column->getName();
+      $names[] = $name;
+      $fields[$name] = isset($this->config['get']['filters'][$name]) ? $this->config['get']['filters'][$name] : array();
+    }
+
+    foreach ($this->getManyToManyTables() as $tables)
+    {
+      $name = sfInflector::underscore($tables['alias']).'_list';
+      $names[] = $name;
+      $fields[$name] = isset($this->config['get']['filters'][$name]) ? $this->config['get']['filters'][$name] : array();
+    }
+
+    if (isset($this->config['get']['filters']))
+    {
+      foreach ($this->config['get']['filters'] as $name => $params)
+      {
+        if (in_array($name, $names))
+        {
+          continue;
+        }
+
+        $fields[$name] = is_array($params) ? $params : array();
+      }
+    }
+
+    unset($this->config['get']['filters']);
+    return $fields;
+  }
+
+  /**
+   * Returns the configuration for fields in a given context.
+   *
+   * @param  string $context The Context
+   *
+   * @return array An array of configuration for all the fields in a given context
+   */
+  public function getFieldsConfiguration($context)
+  {
+    $fields = array();
+    $names = array();
+
+    foreach ($this->getColumns() as $name => $column)
+    {
+      $name = $column->getName();
+      $names[] = $name;
+      $fields[$name] = isset($this->config[$context]['fields'][$name]) ? $this->config[$context]['fields'][$name] : array();
+    }
+
+    foreach ($this->getManyToManyTables() as $tables)
+    {
+      $name = sfInflector::underscore($tables['alias']).'_list';
+      $names[] = $name;
+      $fields[$name] = isset($this->config[$context]['fields'][$name]) ? $this->config[$context]['fields'][$name] : array();
+    }
+
+    if (isset($this->config[$context]['fields']))
+    {
+      foreach ($this->config[$context]['fields'] as $name => $params)
+      {
+        if (in_array($name, $names))
+        {
+          continue;
+        }
+
+        $fields[$name] = is_array($params) ? $params : array();
+      }
+    }
+
+    unset($this->config[$context]['fields']);
+    return $fields;
+  }
+
+  /**
    * Returns a sfValidator class name for a given column.
    *
    * @param sfDoctrineColumn $column
@@ -395,6 +520,7 @@ class sfDoctrineRestGenerator extends sfGenerator
    */
   public function getIndexValidatorClassForColumn($column)
   {
+    $filters = $this->configuration->getFilters();
     $class = $this->getValidatorClassForColumn($column);
 
     if ($column->isPrimaryKey())
@@ -406,7 +532,35 @@ class sfDoctrineRestGenerator extends sfGenerator
       $class = 'sfValidatorInteger';
     }
 
+    if ('sfValidatorInteger' == $class
+      && isset($filters[$column->getName()])
+      && isset($filters[$column->getName()]['multiple'])
+      && $filters[$column->getName()]['multiple'])
+    {
+      $class = 'sfValidatorRegex';
+    }
+
     return $class;
+  }
+
+  /**
+   * Returns an array of tables that represents a many to many relationship.
+   *
+   * A table is considered to be a m2m table if it has 2 foreign keys that are also primary keys.
+   *
+   * @return array An array of tables.
+   */
+  public function getManyToManyTables()
+  {
+    $relations = array();
+    foreach ($this->table->getRelations() as $relation)
+    {
+      if ($relation->getType() === Doctrine_Relation::MANY && isset($relation['refTable']))
+      {
+        $relations[] = $relation;
+      }
+    }
+    return $relations;
   }
 
   /**
@@ -524,6 +678,8 @@ class sfDoctrineRestGenerator extends sfGenerator
     return count($options) ? sprintf('array(%s)', implode(', ', $options)) : '';
   }
 
+
+
   /**
    * Returns a PHP string representing options to pass to a validator for a given column.
    *
@@ -532,11 +688,12 @@ class sfDoctrineRestGenerator extends sfGenerator
    */
   public function getIndexValidatorOptionsForColumn($column)
   {
+    $filters = $this->configuration->getFilters();
     $options = array();
 
     if ($column->isPrimaryKey())
     {
-      $options[] = sprintf('\'pattern\' => \'~^[0-9]+(,[0-9]+)*$~i\', \'must_match\' => true');
+      $options[] = '\'pattern\' => \'~^[0-9]+(\\'.$this->configuration->getSeparator().'[0-9]+)*$~i\', \'must_match\' => true';
     }
     else
     {
@@ -561,6 +718,13 @@ class sfDoctrineRestGenerator extends sfGenerator
           $options[] = "'choices' => " . str_replace("\n", '', $this->arrayExport($values));
           break;
       }
+    }
+
+    if ('sfValidatorRegex' == $this->getIndexValidatorClassForColumn($column)
+        && isset($filters[$column->getName()]['multiple'])
+        && $filters[$column->getName()]['multiple'])
+    {
+      $options[] = '\'pattern\' => \'~^[0-9]+(\\'.$this->configuration->getSeparator().'[0-9]+)*$~i\', \'must_match\' => true';
     }
 
     $options[] = '\'required\' => false';
