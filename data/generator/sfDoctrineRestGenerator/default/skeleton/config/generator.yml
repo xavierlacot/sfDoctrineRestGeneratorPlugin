@@ -1,0 +1,17 @@
+generator:
+  class: sfDoctrineRestGenerator
+  param:
+    model_class:   ##MODEL_CLASS##
+
+    config:
+      get:
+#        display:                       []      # list here fields to render in the response
+#        embed_relations:               []      # list here relations to embed in the response
+#        global_additional_fields:      []      # list here additionnal calculated global fields
+#        max_items:                     0       # uncomment to fix an absolute limit to the number of items in the response
+#        object_additional_fields:      []      # list here additionnal calculated fields
+#        pagination_enabled:            false   # set to true to activate the pagination
+#        pagination_custom_page_size:   false   # set to true to allow the client to pass a page_size parameter
+#        pagination_page_size:          100     # the default number of items in a page
+#        sort_custom:                   false   # set to true to allow the client to pass a sort_by and a sort_order parameter
+#        sort_default:                  []      # set to [column, asc|desc] in order to sort on a column

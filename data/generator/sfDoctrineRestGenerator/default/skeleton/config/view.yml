@@ -1,0 +1,4 @@
+all:
+  http_metas:
+    content-type: text/xml
+  has_layout:   false
