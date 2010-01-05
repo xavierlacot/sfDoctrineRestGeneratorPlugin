@@ -11,6 +11,14 @@
     unset($params['module']);
     unset($params['action']);
 
+    foreach ($params as $name => $value)
+    {
+      if (!$value)
+      {
+        unset($params[$name]);
+      }
+    }
+
     try
     {
       $this->validateIndex($params);
