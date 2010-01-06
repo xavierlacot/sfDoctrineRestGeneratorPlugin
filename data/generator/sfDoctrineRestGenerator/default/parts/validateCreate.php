@@ -24,6 +24,13 @@
     // are non given values required?
     foreach ($unused as $name)
     {
-      $validators[$name]->clean(null);
+      try
+      {
+        $validators[$name]->clean(null);
+      }
+      catch (Exception $e)
+      {
+  			throw new sfException(sprintf('Could not validate field "%s": %s', $name, $e->getMessage()));
+      }
     }
   }
