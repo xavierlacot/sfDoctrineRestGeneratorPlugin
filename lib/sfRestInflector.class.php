@@ -22,9 +22,16 @@ class sfRestInflector extends sfInflector
 
       if (is_array($value))
       {
-        $xml .= '<'.$key.'>';
-        $xml .= self::arrayToXml($value, '', $level + 1);
-        $xml .= '</'.$key.'>';
+        $real_key = $key;
+
+        if (!count($value) || isset($value[0]))
+        {
+          $real_key .= 's';
+        }
+
+        $xml .= '<'.$real_key.'>';
+        $xml .= self::arrayToXml($value, $key, $level + 1);
+        $xml .= '</'.$real_key.'>';
       }
       else
       {
