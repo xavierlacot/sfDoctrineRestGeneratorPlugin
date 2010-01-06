@@ -77,6 +77,7 @@
     foreach ($this->objects as $i => $object)
     {
 <?php foreach ($fields as $field => $configuration): ?>
+<?php if (isset($configuration['date_format']) || isset($configuration['tag_name'])): ?>
       if (isset($object['<?php echo $field ?>']))
       {
 <?php if (isset($configuration['date_format'])): ?>
@@ -87,6 +88,7 @@
         unset($object['<?php echo $field ?>']);
 <?php endif; ?>
       }
+<?php endif; ?>
 <?php endforeach; ?>
 
       $this->objects[$i] = $object;
