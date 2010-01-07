@@ -23,8 +23,8 @@ $max_items = $this->configuration->getValue('get.max_items'); ?>
     $validators['page_size'] = new sfValidatorInteger($params);
 <?php endif; ?>
 <?php endif; ?>
-<?php $sort_enabled = $this->configuration->getValue('get.sort_enabled'); ?>
-<?php if ($sort_enabled): ?>
+<?php $sort_custom = $this->configuration->getValue('get.sort_custom'); ?>
+<?php if ($sort_custom): ?>
     $validators['sort_by'] = new sfValidatorChoice(array('choices' => <?php echo var_export($this->table->getColumnNames()) ?>, 'required' => false));
     $validators['sort_order'] = new sfValidatorChoice(array('choices' => array('asc', 'desc'), 'required' => false));
 <?php endif; ?>
