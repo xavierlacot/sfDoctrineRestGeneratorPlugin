@@ -2,7 +2,7 @@
   {
     if ($force || !isset($this->_payload_array))
     {
-    	$dom = simplexml_load_string($xml);
+    	$dom = @simplexml_load_string($xml);
 
     	if (!$dom)
     	{
