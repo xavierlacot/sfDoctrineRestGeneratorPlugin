@@ -15,8 +15,10 @@
     catch (Exception $e)
     {
       $this->getResponse()->setStatusCode(406);
-      echo $e->getMessage();
-      return sfView::NONE;
+      $error = array(array('message' => $e->getMessage()));
+      $this->xml = sfRestInflector::arrayToXml($error, 'error');
+      $this->setTemplate('index');
+      return sfView::SUCCESS;
     }
 
     $this->object = $this->createObject();

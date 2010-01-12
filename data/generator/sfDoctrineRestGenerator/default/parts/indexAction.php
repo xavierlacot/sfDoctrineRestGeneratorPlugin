@@ -26,7 +26,9 @@
     catch (Exception $e)
     {
     	$this->getResponse()->setStatusCode(406);
-    	return sfView::NONE;
+      $error = array(array('message' => $e->getMessage()));
+      $this->xml = sfRestInflector::arrayToXml($error, 'error');
+      return sfView::SUCCESS;
     }
 
     $this->query($params);
