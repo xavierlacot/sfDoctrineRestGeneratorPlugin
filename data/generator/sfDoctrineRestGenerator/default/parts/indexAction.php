@@ -44,13 +44,15 @@
     $this->embedManyToMany<?php echo $embed_relation ?>($params);
 <?php endif; ?><?php endforeach; ?>
 <?php $object_additional_fields = $this->configuration->getValue('get.object_additional_fields'); ?>
-<?php foreach ($object_additional_fields as $field): ?>
+<?php if (count($object_additional_fields) > 0): ?>
 
     foreach ($this->objects as $key => $object)
     {
+<?php foreach ($object_additional_fields as $field): ?>
       $this->embedAdditional<?php echo $field ?>($key, $params);
+<?php endforeach; ?>
     }
-<?php endforeach; ?><?php $global_additional_fields = $this->configuration->getValue('get.global_additional_fields'); ?>
+<?php endif; ?><?php $global_additional_fields = $this->configuration->getValue('get.global_additional_fields'); ?>
 <?php foreach ($global_additional_fields as $field): ?>
 
     $this->embedAdditional<?php echo $field ?>($params);
