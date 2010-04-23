@@ -35,15 +35,17 @@ class sfRestInflector extends sfInflector
       }
       else
       {
-        if ('' != trim($value))
+        $trimed_value = ($value !== false) ? trim($value) : '0';
+
+        if ($trimed_value !== '')
         {
-          if (htmlspecialchars($value)!=$value)
+          if (htmlspecialchars($trimed_value) != $trimed_value)
           {
-            $xml .= '<'.$key.'><![CDATA['.$value.']]></'.$key.'>';
+            $xml .= '<'.$key.'><![CDATA['.$trimed_value.']]></'.$key.'>';
           }
           else
           {
-            $xml .= '<'.$key.'>'.$value.'</'.$key.'>';
+            $xml .= '<'.$key.'>'.$trimed_value.'</'.$key.'>';
           }
         }
       }
