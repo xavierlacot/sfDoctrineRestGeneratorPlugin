@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://pear.php.net/dtd/package-2.0" xmlns:tasks="http://pear.php.net/dtd/tasks-1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" packagerversion="1.4.1" version="2.0" xsi:schemaLocation="http://pear.php.net/dtd/tasks-1.0 http://pear.php.net/dtd/tasks-1.0.xsd http://pear.php.net/dtd/package-2.0 http://pear.php.net/dtd/package-2.0.xsd">
+  <name>sfDoctrineRestGeneratorPlugin</name>
+  <channel>plugins.symfony-project.org</channel>
+  <summary>This plugin permits to generate REST modules bound to Doctrine models.</summary>
+  <description>This plugin permits to generate REST modules bound to Doctrine models. It
+allows to easily create REST webservices, and provides an extensible framework
+for data exchange. Here are some key features :
+
+  * REST module generation "à la admin-generator"
+  * easy-to-customize generator.yml configuration file
+  * possibility to embed related models
+  * possibility to embed extra fields
+  * validation of the GET and POST constraints using Symfony validators
+  * ability to limit the number of results, with/out pagination
+  * support for constraints unions (ie.,  http://api.example.org/city?city_id=12,13,14)
+  * abstract and replaceable objects serialization</description>
+  <lead>
+    <name>Xavier Lacot</name>
+    <user>xavier</user>
+    <email>xavier@lacot.org</email>
+    <active>yes</active>
+  </lead>
+  <date>2010-05-09</date>
+  <time>10:05:19</time>
+  <version>
+    <release>0.8.0</release>
+    <api>0.8.0</api>
+  </version>
+  <stability>
+    <release>beta</release>
+    <api>beta</api>
+  </stability>
+  <license uri="http://www.opensource.org/licenses/mit-license.html">MIT</license>
+  <notes>-</notes>
+  <contents>
+    <dir baseinstalldir="." name="/">
+      <dir name="data">
+        <dir name="generator">
+          <dir name="sfDoctrineRestGenerator">
+            <dir name="default">
+              <dir name="parts">
+                <file name="configuration.php" role="data"/>
+                <file name="createAction.php" role="data"/>
+                <file name="createObject.php" role="data"/>
+                <file name="deleteAction.php" role="data"/>
+                <file name="doSave.php" role="data"/>
+                <file name="fieldsConfiguration.php" role="data"/>
+                <file name="getCreateValidators.php" role="data"/>
+                <file name="getIndexValidators.php" role="data"/>
+                <file name="indexAction.php" role="data"/>
+                <file name="paginationConfiguration.php" role="data"/>
+                <file name="parsePayload.php" role="data"/>
+                <file name="query.php" role="data"/>
+                <file name="queryAdditionnal.php" role="data"/>
+                <file name="sortConfiguration.php" role="data"/>
+                <file name="updateObjectFromRequest.php" role="data"/>
+                <file name="validateCreate.php" role="data"/>
+                <file name="validateIndex.php" role="data"/>
+              </dir>
+              <dir name="skeleton">
+                <dir name="actions">
+                  <file name="actions.class.php" role="data"/>
+                </dir>
+                <dir name="config">
+                  <file name="generator.yml" role="data"/>
+                  <file name="view.yml" role="data"/>
+                </dir>
+                <dir name="lib">
+                  <file name="configuration.php" role="data"/>
+                </dir>
+                <dir name="templates"></dir>
+              </dir>
+              <dir name="template">
+                <dir name="actions">
+                  <file name="actions.class.php" role="data"/>
+                </dir>
+                <dir name="config"></dir>
+                <dir name="templates">
+                  <file name="indexSuccess.php" role="data"/>
+                </dir>
+              </dir>
+            </dir>
+          </dir>
+        </dir>
+      </dir>
+      <dir name="lib">
+        <dir name="generator">
+          <file name="sfDoctrineRestGenerator.class.php" role="data"/>
+          <file name="sfDoctrineRestGeneratorConfiguration.class.php" role="data"/>
+        </dir>
+        <file name="sfRestInflector.class.php" role="data"/>
+        <dir name="task">
+          <file name="sfDoctrineRestGenerateModuleTask.class.php" role="data"/>
+        </dir>
+      </dir>
+      <file name="LICENSE" role="data"/>
+      <file name="README" role="data"/>
+    </dir>
+  </contents>
+  <dependencies>
+    <required>
+      <php>
+        <min>5.2.4</min>
+      </php>
+      <pearinstaller>
+        <min>1.4.1</min>
+      </pearinstaller>
+      <package>
+        <name>symfony</name>
+        <channel>pear.symfony-project.com</channel>
+        <min>1.3.0</min>
+        <max>2.0.0</max>
+        <exclude>2.0.0</exclude>
+      </package>
+    </required>
+  </dependencies>
+  <phprelease></phprelease>
+  <changelog>
+  <release>
+   <version>
+    <release>0.8.0</release>
+    <api>0.8.0</api>
+   </version>
+   <stability>
+    <release>beta</release>
+    <api>beta</api>
+   </stability>
+   <date>2010-05-09</date>
+   <license uri="http://www.opensource.org/licenses/mit-license.html">MIT</license>
+   <notes>
+  * REST module generation "à la admin-generator"
+  * easy-to-customize generator.yml configuration file
+  * possibility to embed related models
+  * possibility to embed extra fields
+  * validation of the GET and POST constraints using Symfony validators
+  * ability to limit the number of results, with/out pagination
+  * support for constraints unions (ie.,  http://api.example.org/city?city_id=12,13,14)
+  * abstract and replaceable objects serialization
+   </notes>
+  </release>
+ </changelog>
+</package>
