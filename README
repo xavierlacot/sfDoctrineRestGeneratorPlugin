@@ -1,0 +1,375 @@
+# sfDoctrineRestGeneratorPlugin
+
+## Introduction
+
+This plugin permits to generate REST modules bound to Doctrine models. It
+allows to easily create REST webservices, and provides an extensible framework
+for data exchange. Here are some key features :
+
+  * REST module generation "à la admin-generator"
+  * easy-to-customize generator.yml configuration file
+  * possibility to embed related models
+  * possibility to embed extra fields
+  * validation of the GET and POST constraints using Symfony validators
+  * ability to limit the number of results, with/out pagination
+  * support for constraints unions (ie.,  http://api.example.org/city?city_id=12,13,14)
+  * abstract and replaceable objects serialization
+
+
+## How to installed
+
+  * go to your project's root
+
+  * Install the plugin:
+
+         ./symfony plugin:install http://plugins.symfony-project.com/sfDoctrineRestGeneratorPlugin
+
+
+  * clear the cache:
+
+         ./symfony cc
+
+
+  * alternatively, you might prefer to install this plugin as a Subversion dependancy. In this case, here is the repository: [http://svn.symfony-project.com/plugins/sfDoctrineRestGeneratorPlugin](http://svn.symfony-project.com/plugins/sfDoctrineRestGeneratorPlugin)
+
+## Usage
+
+### REST module generation
+
+Generating a REST module is pretty straightforward:
+
+       ./symfony doctrine:generate-rest-module  APPLICATION MODULE MODEL
+
+
+This will create a module named "MODULE" in the application "APPLICATION", and
+this module will be configured to expose the "MODEL" model through a
+REST-style service.
+
+
+### What is generated
+
+Let suppose we have the following model :
+
+        Post:
+          actAs:                      [ Timestampable ]
+          columns:
+            post_category_id:         integer(4)
+            created_by:               integer
+            title:                    {type: string(128), notnull: true}
+            summary:                  {type: string(255), notnull: true}
+            body:                     clob
+          relations:
+            CreatedBy:                { class: sfGuardUser, onDelete: SET NULL, local: created_by, foreign: id, foreignAlias: CreatedPost }
+            PostCategory:             { class: PostCategory, onDelete: SET NULL, local: post_category_id, foreign: id }
+
+        PostCategory:
+          columns:
+            id:                        { type: integer(4), primary: true, autoincrement: true }
+            name:                      { type: string, size: 100, notnull: true, unique: true }
+            description:               clob
+            is_enabled:                { type: boolean, default: true }
+
+
+If we want to expose the model "Post" through a REST API, we will simply type
+the command:
+
+
+        ./symfony doctrine:generate-rest-module  api post Post
+
+
+This will generate:
+
+ * a new route in the `routing.yml` file of the "api" application :
+
+         Post:
+           class:   sfObjectRouteCollection
+           options:
+             model:   Post
+             actions: [ create, list, delete ]
+             module:  post
+             column:  id
+             format:  xml
+
+ * a "post" RESTgen module, in apps/api/modules/post, with four sub-directories:
+   * actions: contains a "postActions" class, which extends a on-the-fly generated "autopostActions" class,
+   * config: contains the files generator.yml and view.yml (see the chapter "Service configuration" for explanations on how to configure the generated module),
+   * lib: contains an empty "postGeneratorConfiguration" class, which extends a on-the-fly generated "BasePostGeneratorConfiguration" class,
+   * templates
+
+ * after a first request has been made to the REST module, the cache directory will contain the code of the generated module, and particularly the code of the "autopostActions" class, which you should check in order to understand the way the plugin works.
+
+
+You should be able to see your posts as a XML feed at http://api.example.com/post/
+
+
+## Service configuration
+
+As for Symfony's admin-generator, the REST generator generates code on-the-fly,
+depending on the configuration done in the `generator.yml` file.
+
+Here is the default content of the `generator.yml` file:
+
+        generator:
+          class: sfDoctrineRestGenerator
+          param:
+            model_class:   Post
+
+            config:
+              default:
+        #        fields:                                # list here the fields.
+        #          created_at:                  { date_format: 'Y-m-d\TH:i:s', tag_name: 'created' }      # for instance
+        #        separator:                     ','     # separator used for multiple filters
+              get:
+        #        display:                       []      # list here fields to render in the response
+        #        embed_relations:               []      # list here relations to embed in the response
+        #        global_additional_fields:      []      # list here additionnal calculated global fields
+        #        max_items:                     0       # uncomment to fix an absolute limit to the number of items in the response
+        #        object_additional_fields:      []      # list here additionnal calculated fields
+        #        pagination_enabled:            false   # set to true to activate the pagination
+        #        pagination_custom_page_size:   false   # set to true to allow the client to pass a page_size parameter
+        #        pagination_page_size:          100     # the default number of items in a page
+        #        sort_custom:                   false   # set to true to allow the client to pass a sort_by and a sort_order parameter
+        #        sort_default:                  []      # set to [column, asc|desc] in order to sort on a column
+        #        filters:                               # list here the filters
+        #          created_at:                  { date_format: 'd-m-Y', multiple: true }  # for instance
+
+The different possible parameters, commented in the previous sample, are
+detailed in the following chapters.
+
+
+### model_class
+
+The `model_class` parameters defines the name of the Doctrine model the REST
+module is bound to.
+
+### default
+
+The `default` option contains several general configuration directives:
+
+#### fields
+
+The `fields` option contains, for each of the fields of the model, an array of
+decoration options that are used during the (de-)serialization. It might be:
+
+  * `date_format`: the date format to use when formatting the field. This must be a format acceptable for the date() function,
+  * `tag_name`: the tag name to use for displaying this field. For instance, you might want to associate the title of the post to the key "post_title", and not "title".
+
+
+#### separator
+
+The separator to use in url when passing objects primary keys. The genertaed
+module allows to require several ressources identified by their ids:
+http://api.example.com/post/?id=12,17,19
+
+
+### get
+
+The `get` option lists several options specific to the "get" operation:
+
+#### display
+
+The `display` option contains the list of the fields to output in the XML
+feed. For example with the previously defines "Post" model, you can choose to
+only display the title and the author's id by changing this parameter:
+
+            config:
+              get:
+                display:                       [ title, author_id ]
+
+If this option is left empty, all the fieds of the model will be rendered.
+
+#### embed_relations
+
+The `embed_relations` options contains the list of the Doctrine relations to
+be embedded. It might be 1-n or n-n relations, which content will be embeded
+in each object. Here is a valid configuration for our "Post" model:
+
+            config:
+              get:
+                embed_relations:                       [ PostCategory ]
+
+This configuration will produce a feed like:
+
+    ...
+    <Post>
+      <Id>1</Id>
+      <PostCategoryId>2</PostCategoryId>
+      <CreatedBy>26</CreatedBy>
+      <Title>Here the title of my post</Title>
+      <Summary>Here the summary of my post</Summary>
+      <Body>Here the body of my post</Body>
+      <PostCategory>
+        <Id>2</Id>
+        <Name>Name of the category</Name>
+        <Description>Description of the category</Description>
+        <IsEnabled>1</IsEnabled>
+      </PostCategory>
+    </Post>
+    ...
+
+Several things to consider:
+
+  * You cannot define the fields to render in the related objects.
+  * The response contains both the `PostCategoryId` field and the `PostCategory.Id` fields. You can save some bytes by using the `display` option.
+
+
+#### global_additional_fields
+
+In some case, you might want to embed some additionnal fields in he XML
+response. For instance, you might want to include the total number of posts,
+an average price, etc.
+
+The `global_additional_fields` is helpful in such a situation. It contains an
+array of the fields that you want to add and, for each field, the generator
+will create a method dedicated to embed this field. Here is a possible
+configuration:
+
+            config:
+              get:
+                global_additional_fields:                       [ TotalPosts ]
+
+This will create an empty method, which has to be manually overridden in the
+generated module, in order to include the additionnal field of your choice:
+
+    public function embedAdditionalTotalPosts($params)
+    {
+      $totalObjects = count($this->objects);
+      $this->objects['NbObjects'] = $totalObjects;
+    }
+
+
+#### max_items
+
+This directive allows to fix an absolute limit to the number of items in the
+response. This parameter has the priority over the `pagination_page_size`
+directive, and the possibly user's defined `page_size` parameter.
+
+There is by default no limit. Setting this key to 0 will disable the limit.
+
+
+#### object_additional_fields
+
+The `object_additional_fields` contains the list of the additionnal fields
+that have to be embedded in each item of the response. For instance, if you
+want to add a field `NbWords`, which would give the number of words in the
+body of the post, use the following configuration:
+
+            config:
+              get:
+                object_additional_fields:                       [ NbWords ]
+
+This will create an empty method, which has to be manually overridden in the
+generated module, in order to include the additionnal field of your choice:
+
+    public function embedAdditionalNbWords($item, $params)
+    {
+      $array = $this->objects[$item];
+      $array['NbWords'] = str_word_count($array['body']);
+      $this->objects[$item] = $array;
+    }
+
+This option is useful for embedding a relation with only a few fields (see
+the `embed_relations` option):
+
+ * embed the relation
+ * use the `object_additional_fields` option to unset the non-desired fields.
+
+The embedAdditionalXXX methods will always look like:
+
+    public function embedAdditionalXXXX($item, $params)
+    {
+      $array = $this->objects[$item];
+
+      // here go some manipulation of $array
+
+      $this->objects[$item] = $array;
+    }
+
+
+#### pagination_enabled
+
+This option defines whether or not the pagination should be enabled. Defaults
+to false. If enabled, the service will allow a parameter "page" to be passed
+in the request. The request can then be of the form
+http://api.example.org/post/?page=3
+
+#### pagination_custom_page_size
+
+Set this option to true to allow the client to pass a `page_size` parameter.
+Else, the pagination will have a fixed size. If the `pagination_enabled`
+option is set to false, this option will have no effect.
+
+#### pagination_page_size
+
+This option defile the default page size of the pagination. If the
+`pagination_enabled` option is set to false, this option will have no effect.
+
+#### sort_custom
+
+Set this option to `true` to allow the client to pass a `sort_by` and a
+`sort_order` parameter in query string. Else, the client will not be able to
+sort the results.
+
+#### sort_default
+
+The `sort_default` option defines the default sort order. The format of this
+option is [column, asc|desc]. For example:
+
+            config:
+              get:
+                sort_default:                       [ created_at, desc ]
+
+
+#### filters
+
+This option allows to override the default filtering behavior by setting some
+options. By default, the plugin allows to filter the results based on the
+model's fields. For each field, it is possible to pass a value in query
+string, which will be used to select the matching items.
+
+For instance, you might want to get only the posts of a certain category
+using a category_id parameter in the request. If you want to allow the client
+to request the posts of several categories, you have to explicitely allow it,
+as it may create more complex (ie. ressource-consuming and slow) requests. In
+that goal, the key `multiple` has to be set to `true` for this fieldname:
+
+            config:
+              get:
+                filters:
+                  category_id:                  { multiple: true }
+
+For the dates fields, you might want to tell the plugin which date format is
+accepted. For example:
+
+            config:
+              get:
+                filters:
+                  created_at:                  { date_format: 'd-m-Y' }
+
+
+## Serialization
+
+The response to a get request is formatted as a XML feed. The serializer
+generates a valid feed, enclosing the content of a field in CDATA sections if
+necessary.
+
+## Whishlist
+ * a JSON serializer. Currently, the plugin only allows to serialize the resultsets as a XML field (see the chapter "Serialization"). Mobile clients, which require the most compact possible streams, would take benefit from a JSON or even a BSON serialization.
+ * all the possible feedback!
+
+## Contribute to the plugin, ask for help
+
+Please ask for help on how to use the plugin on Symfony's users mailing list.
+You can also send me a mail directly : xavier@lacot.org.
+
+## License and credits
+
+This plugin has been developed by [Xavier Lacot](http://lacot.org/) and is
+licensed under the MIT license.
+
+## Changelog
+
+### version 0.8 - 2010-05-09
+
+Initial public release. Features REST module generation with validation and a
+XML serializer.
