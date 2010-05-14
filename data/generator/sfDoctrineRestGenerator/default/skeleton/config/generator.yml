@@ -7,6 +7,7 @@ generator:
       default:
 #        fields:                                 # list here the fields.
 #          created_at:                  { date_format: 'Y-m-d\TH:i:s', tag_name: 'created' }      # for instance
+#        formats_enabled:               [ xml, json ]    # enabled formats
 #        separator:                     ','     # separator used for multiple filters
       get:
 #        display:                       []      # list here fields to render in the response

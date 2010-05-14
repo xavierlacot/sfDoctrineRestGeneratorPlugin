@@ -1,8 +1,18 @@
 <?php
 
-class sfRestInflector extends sfInflector
+class sfResourceSerializerXml extends sfResourceSerializer
 {
-  public static function arrayToXml($array, $rootNodeName = 'data', $level = 0)
+  public function getContentType()
+  {
+    return 'application/xml';
+  }
+
+  public function serialize($array, $rootNodeName = 'data')
+  {
+    return $this->arrayToXml($array, $rootNodeName, 0);
+  }
+
+  public function arrayToXml($array, $rootNodeName = 'data', $level = 0)
   {
     $xml = '';
 
@@ -30,7 +40,7 @@ class sfRestInflector extends sfInflector
         }
 
         $xml .= '<'.$real_key.'>';
-        $xml .= self::arrayToXml($value, $key, $level + 1);
+        $xml .= $this->arrayToXml($value, $key, $level + 1);
         $xml .= '</'.$real_key.'>';
       }
       else

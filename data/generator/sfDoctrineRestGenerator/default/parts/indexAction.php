@@ -7,6 +7,14 @@
   {
     $this->forward404Unless($request->isMethod(sfRequest::GET));
     $params = $request->getParameterHolder()->getAll();
+    $format = $params['sf_format'];
+    $request->setRequestFormat('html');
+
+    if (!in_array($format, <?php var_export($this->configuration->getValue('default.formats_enabled', array('json', 'xml'))) ?>))
+    {
+      $format = 'xml';
+    }
+
     unset($params['sf_format']);
     unset($params['module']);
     unset($params['action']);
@@ -99,6 +107,8 @@
     }
 <?php endif; ?>
 
-    $this->xml = sfRestInflector::arrayToXml($this->objects, $this->model);
+    $serializer = sfResourceSerializer::getInstance($format);
+    $this->getResponse()->setContentType($serializer->getContentType());
+    $this->output = $serializer->serialize($this->objects, $this->model);
     unset($this->objects);
   }

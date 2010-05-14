@@ -21,11 +21,11 @@ for data exchange. Here are some key features :
     <email>xavier@lacot.org</email>
     <active>yes</active>
   </lead>
-  <date>2010-05-09</date>
-  <time>10:05:19</time>
+  <date>2010-05-14</date>
+  <time>17:35:12</time>
   <version>
-    <release>0.8.0</release>
-    <api>0.8.0</api>
+    <release>0.9.0</release>
+    <api>0.9.0</api>
   </version>
   <stability>
     <release>beta</release>
@@ -89,7 +89,11 @@ for data exchange. Here are some key features :
           <file name="sfDoctrineRestGenerator.class.php" role="data"/>
           <file name="sfDoctrineRestGeneratorConfiguration.class.php" role="data"/>
         </dir>
-        <file name="sfRestInflector.class.php" role="data"/>
+        <dir name="serializer">
+          <file name="sfResourceSerializer.class.php" role="data"/>
+          <file name="sfResourceSerializerJson.class.php" role="data"/>
+          <file name="sfResourceSerializerXml.class.php" role="data"/>
+        </dir>
         <dir name="task">
           <file name="sfDoctrineRestGenerateModuleTask.class.php" role="data"/>
         </dir>
@@ -117,6 +121,21 @@ for data exchange. Here are some key features :
   </dependencies>
   <phprelease></phprelease>
   <changelog>
+  <release>
+   <version>
+    <release>0.9.0</release>
+    <api>0.9.0</api>
+   </version>
+   <stability>
+    <release>beta</release>
+    <api>beta</api>
+   </stability>
+   <date>2010-05-14</date>
+   <license uri="http://www.opensource.org/licenses/mit-license.html">MIT</license>
+   <notes>
+  * added a JSON serializer
+   </notes>
+  </release>
   <release>
    <version>
     <release>0.8.0</release>

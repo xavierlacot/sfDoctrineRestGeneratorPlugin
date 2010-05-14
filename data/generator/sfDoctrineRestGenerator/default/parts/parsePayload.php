@@ -1,17 +1,31 @@
-  protected function parsePayload($xml, $force = false)
+  protected function parsePayload($payload, $force = false)
   {
     if ($force || !isset($this->_payload_array))
     {
-    	$dom = @simplexml_load_string($xml);
+      $format = $this->getRequest()->getParameter('sf_format);
 
-    	if (!$dom)
+      if (!in_array($format, <?php var_export($this->configuration->getValue('default.formats_enabled', array('json', 'xml'))) ?>))
+      {
+        $format = 'xml';
+      }
+
+      if ('xml' == $format)
+      {
+    	  $payload_array = @simplexml_load_string($payload);
+      }
+      elseif ('json' == $format)
+      {
+    	  $payload_array = json_decode($payload, true);
+      }
+
+    	if (!isset($payload_array) || !$payload_array)
     	{
     	  throw new sfException('Could not load payload, obviously not a valid XML!');
     	}
 
       $this->_payload_array = array();
 
-      foreach ($dom as $name => $value)
+      foreach ($payload_array as $name => $value)
       {
       	$name = sfInflector::underscore($name);
       	$this->_payload_array[$name] = trim(rtrim((string)$value));
