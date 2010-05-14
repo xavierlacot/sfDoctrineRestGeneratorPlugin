@@ -7,7 +7,7 @@
   {
     $this->forward404Unless($request->isMethod(sfRequest::GET));
     $params = $request->getParameterHolder()->getAll();
-    $format = $params['sf_format'];
+    $format = isset($params['sf_format']) ? $params['sf_format'] : 'xml';
     $request->setRequestFormat('html');
 
     if (!in_array($format, <?php var_export($this->configuration->getValue('default.formats_enabled', array('json', 'xml'))) ?>))

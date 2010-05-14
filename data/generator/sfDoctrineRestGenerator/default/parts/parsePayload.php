@@ -2,7 +2,7 @@
   {
     if ($force || !isset($this->_payload_array))
     {
-      $format = $this->getRequest()->getParameter('sf_format);
+      $format = $this->getRequest()->getParameter('sf_format');
 
       if (!in_array($format, <?php var_export($this->configuration->getValue('default.formats_enabled', array('json', 'xml'))) ?>))
       {
