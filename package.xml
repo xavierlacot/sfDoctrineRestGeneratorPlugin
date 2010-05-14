@@ -22,10 +22,10 @@ for data exchange. Here are some key features :
     <active>yes</active>
   </lead>
   <date>2010-05-14</date>
-  <time>17:35:12</time>
+  <time>18:23:12</time>
   <version>
-    <release>0.9.0</release>
-    <api>0.9.0</api>
+    <release>0.9.1</release>
+    <api>0.9.1</api>
   </version>
   <stability>
     <release>beta</release>
@@ -121,6 +121,21 @@ for data exchange. Here are some key features :
   </dependencies>
   <phprelease></phprelease>
   <changelog>
+  <release>
+   <version>
+    <release>0.9.1</release>
+    <api>0.9.1</api>
+   </version>
+   <stability>
+    <release>beta</release>
+    <api>beta</api>
+   </stability>
+   <date>2010-05-14</date>
+   <license uri="http://www.opensource.org/licenses/mit-license.html">MIT</license>
+   <notes>
+  * fixed a typo in the previous release
+   </notes>
+  </release>
   <release>
    <version>
     <release>0.9.0</release>
