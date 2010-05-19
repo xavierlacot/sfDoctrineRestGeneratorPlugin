@@ -7,6 +7,7 @@
   {
     $this->forward404Unless($request->isMethod(sfRequest::POST));
     $content = $request->getParameter('content');
+    $request->setRequestFormat('html');
 
     try
     {
@@ -14,9 +15,18 @@
     }
     catch (Exception $e)
     {
-      $this->getResponse()->setStatusCode(406);
+      $format = $request->getParameter('sf_format');
+
+      if (!in_array($format, <?php var_export($this->configuration->getValue('default.formats_enabled', array('json', 'xml'))) ?>))
+      {
+        $format = 'xml';
+      }
+
+    	$this->getResponse()->setStatusCode(406);
       $error = array(array('message' => $e->getMessage()));
-      $this->xml = sfRestInflector::arrayToXml($error, 'error');
+      $serializer = sfResourceSerializer::getInstance($format);
+      $this->getResponse()->setContentType($serializer->getContentType());
+      $this->output = $serializer->serialize($error, 'error');
       $this->setTemplate('index');
       return sfView::SUCCESS;
     }

@@ -35,7 +35,9 @@
     {
     	$this->getResponse()->setStatusCode(406);
       $error = array(array('message' => $e->getMessage()));
-      $this->xml = sfRestInflector::arrayToXml($error, 'error');
+      $serializer = sfResourceSerializer::getInstance($format);
+      $this->getResponse()->setContentType($serializer->getContentType());
+      $this->output = $serializer->serialize($error, 'error');
       return sfView::SUCCESS;
     }
 
