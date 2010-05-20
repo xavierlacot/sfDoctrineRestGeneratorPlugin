@@ -86,8 +86,20 @@
     }
 <?php endif; ?>
 
-<?php $fields = $this->configuration->getValue('default.fields'); ?>
-<?php if (count($fields) > 0): ?>
+<?php
+$fields = $this->configuration->getValue('default.fields');
+$specific_configuration_directives = false;
+
+foreach ($fields as $field => $configuration)
+{
+  if (isset($configuration['date_format']) || isset($configuration['tag_name']))
+  {
+    $specific_configuration_directives = true;
+    continue;
+  }
+}
+?>
+<?php if ($specific_configuration_directives): ?>
     foreach ($this->objects as $i => $object)
     {
 <?php foreach ($fields as $field => $configuration): ?>
