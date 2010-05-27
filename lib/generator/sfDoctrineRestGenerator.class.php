@@ -121,6 +121,21 @@ class sfDoctrineRestGenerator extends sfGenerator
     return isset($this->params['plural']) ? $this->params['plural'] : $this->getSingularName().'_list';
   }
 
+  /**
+   * Array export. Export array to formatted php code
+   *
+   * @param array $values
+   * @return string $php
+   */
+  protected function arrayExport($values)
+  {
+    $php = var_export($values, true);
+    $php = str_replace("\n", '', $php);
+    $php = str_replace('array (  ', 'array(', $php);
+    $php = str_replace(',)', ')', $php);
+    $php = str_replace('  ', ' ', $php);
+    return $php;
+  }
 
   public function asPhp($variable)
   {
