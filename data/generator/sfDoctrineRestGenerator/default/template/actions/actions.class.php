@@ -12,7 +12,7 @@
 class <?php echo $this->getGeneratedModuleName() ?>Actions extends <?php echo $this->getActionsBaseClass() ?>
 
 {
-  protected $model = '<?php echo $this->getModelClass() ?>';
+  public $model = '<?php echo $this->getModelClass() ?>';
 
 <?php include dirname(__FILE__).'/../../parts/createAction.php' ?>
 
@@ -26,6 +26,8 @@ class <?php echo $this->getGeneratedModuleName() ?>Actions extends <?php echo $t
 
 <?php include dirname(__FILE__).'/../../parts/getIndexValidators.php' ?>
 
+<?php include dirname(__FILE__).'/../../parts/getUpdateValidators.php' ?>
+
 <?php include dirname(__FILE__).'/../../parts/indexAction.php' ?>
 
 <?php include dirname(__FILE__).'/../../parts/parsePayload.php' ?>
@@ -33,9 +35,15 @@ class <?php echo $this->getGeneratedModuleName() ?>Actions extends <?php echo $t
 <?php include dirname(__FILE__).'/../../parts/query.php' ?>
 <?php include dirname(__FILE__).'/../../parts/queryAdditionnal.php' ?>
 
+<?php include dirname(__FILE__).'/../../parts/updateAction.php' ?>
+
 <?php include dirname(__FILE__).'/../../parts/updateObjectFromRequest.php' ?>
+
+<?php include dirname(__FILE__).'/../../parts/validate.php' ?>
 
 <?php include dirname(__FILE__).'/../../parts/validateCreate.php' ?>
 
 <?php include dirname(__FILE__).'/../../parts/validateIndex.php' ?>
+
+<?php include dirname(__FILE__).'/../../parts/validateUpdate.php' ?>
 }

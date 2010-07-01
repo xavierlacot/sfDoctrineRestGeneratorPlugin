@@ -1,6 +1,6 @@
   /**
    * Returns the list of validators for a create request.
-   * @return  array
+   * @return  array  an array of validators
    */
   public function getCreateValidators()
   {

@@ -58,14 +58,14 @@ EOF;
   class:   sfObjectRouteCollection
   options:
     model:   %s
-    actions: [ create, list, delete ]
+    actions: [ create, delete, list, update ]
     module:  %s
-    column:  id
+    column:  %s
     format:  xml
 
 
 EOF
-      , $model, $model, $module).$content;
+      , $model, $model, $module, $primaryKey).$content;
 
       $this->logSection('file+', $routing);
       file_put_contents($routing, $content);

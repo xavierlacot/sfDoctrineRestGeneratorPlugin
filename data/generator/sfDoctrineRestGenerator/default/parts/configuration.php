@@ -10,6 +10,18 @@
  */
 abstract class Base<?php echo ucfirst($this->getModuleName()) ?>GeneratorConfiguration extends sfDoctrineRestGeneratorConfiguration
 {
+  public function getAdditionalParams()
+  {
+    return <?php echo $this->asPhp(isset($this->config['get']['additional_params']) ? $this->config['get']['additional_params'] : array()) ?>;
+<?php unset($this->config['get']['additional_params']) ?>
+  }
+
+  public function getDefaultFormat()
+  {
+    return <?php echo $this->asPhp(isset($this->config['get']['default_format']) ? $this->config['get']['default_format'] : 'json') ?>;
+<?php unset($this->config['get']['default_format']) ?>
+  }
+
   public function getDisplay()
   {
     return <?php echo $this->asPhp(isset($this->config['get']['display']) ? $this->config['get']['display'] : array()) ?>;

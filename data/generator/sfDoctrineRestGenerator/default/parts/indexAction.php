@@ -7,21 +7,27 @@
   {
     $this->forward404Unless($request->isMethod(sfRequest::GET));
     $params = $request->getParameterHolder()->getAll();
-    $format = isset($params['sf_format']) ? $params['sf_format'] : 'xml';
+
+    // notify an event before the action's body starts
+    $this->dispatcher->notify(new sfEvent($this, 'sfDoctrineRestGenerator.get.pre', array('params' => $params)));
+
+    $format = isset($params['sf_format']) ? $params['sf_format'] : '<?php echo $this->configuration->getValue('get.default_format') ?>';
     $request->setRequestFormat('html');
 
     if (!in_array($format, <?php var_export($this->configuration->getValue('default.formats_enabled', array('json', 'xml'))) ?>))
     {
-      $format = 'xml';
+      $format = '<?php echo $this->configuration->getValue('get.default_format') ?>';
     }
 
     unset($params['sf_format']);
     unset($params['module']);
     unset($params['action']);
 
+    $additional_params = <?php var_export($this->configuration->getValue('get.additional_params', array())); ?>;
+
     foreach ($params as $name => $value)
     {
-      if (!$value)
+      if (!$value || in_array($name, $additional_params))
       {
         unset($params[$name]);
       }
@@ -34,10 +40,26 @@
     catch (Exception $e)
     {
     	$this->getResponse()->setStatusCode(406);
-      $error = array(array('message' => $e->getMessage()));
       $serializer = sfResourceSerializer::getInstance($format);
       $this->getResponse()->setContentType($serializer->getContentType());
-      $this->output = $serializer->serialize($error, 'error');
+      $error = $e->getMessage();
+
+      // event filter to enable customisation of the error message.
+      $result = $this->dispatcher->filter(
+        new sfEvent($this, 'sfDoctrineRestGenerator.filter_error_output'),
+        $error
+      )->getReturnValue();
+
+      if ($error === $result)
+      {
+        $error = array(array('message' => $error));
+        $this->output = $serializer->serialize($error, 'error');
+      }
+      else
+      {
+        $this->output = $serializer->serialize($result);
+      }
+
       return sfView::SUCCESS;
     }
 
@@ -65,7 +87,7 @@
 <?php endif; ?><?php $global_additional_fields = $this->configuration->getValue('get.global_additional_fields'); ?>
 <?php foreach ($global_additional_fields as $field): ?>
 
-    $this->embedAdditional<?php echo $field ?>($params);
+    $this->embedGlobalAdditional<?php echo $field ?>($params);
 <?php endforeach; ?>
 
 <?php $display = $this->configuration->getValue('get.display'); ?>

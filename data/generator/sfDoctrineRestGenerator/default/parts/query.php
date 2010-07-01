@@ -1,7 +1,8 @@
   /**
    * Executes the query for selecting a collection of objects, eventually
    * along with related objects
-   * @param   array   $parsm  an array of criterions for the selection
+   *
+   * @param   array   $params  an array of criterions for the selection
    */
   public function query($params)
   {
@@ -126,5 +127,12 @@ $pagination_page_size = $this->configuration->getValue('get.pagination_page_size
       $q->andWhere($this->model.'.'.$name.' = ?', $value);
     }
 
-    $this->objects = $q->execute(array(), Doctrine::HYDRATE_ARRAY);
+    $this->objects = $this->dispatcher->filter(
+      new sfEvent(
+        $this,
+        'sfDoctrineRestGenerator.filter_results',
+        array()
+      ),
+      $q->execute(array(), Doctrine::HYDRATE_ARRAY)
+    )->getReturnValue();
   }

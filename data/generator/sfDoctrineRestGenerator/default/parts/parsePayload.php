@@ -2,11 +2,11 @@
   {
     if ($force || !isset($this->_payload_array))
     {
-      $format = $this->getRequest()->getParameter('sf_format');
+      $format = $this->getRequest()->getParameter('sf_format', '<?php echo $this->configuration->getValue('get.default_format') ?>');
 
       if (!in_array($format, <?php var_export($this->configuration->getValue('default.formats_enabled', array('json', 'xml'))) ?>))
       {
-        $format = 'xml';
+        $format = '<?php echo $this->configuration->getValue('get.default_format') ?>';
       }
 
       if ('xml' == $format)
@@ -20,7 +20,7 @@
 
     	if (!isset($payload_array) || !$payload_array)
     	{
-    	  throw new sfException('Could not load payload, obviously not a valid XML!');
+    	  throw new sfException(sprintf('Could not parse payload, obviously not a valid %s data!', $format));
     	}
 
       $this->_payload_array = array();

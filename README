@@ -8,13 +8,15 @@ for data exchange. Here are some key features :
 
   * REST module generation "à la admin-generator"
   * easy-to-customize generator.yml configuration file
+  * validation of the parameters passed to the service using symfony validators
+  * serialization as XML or JSON feeds
   * possibility to embed related models
   * possibility to embed extra fields
-  * validation of the GET and POST constraints using Symfony validators
-  * ability to limit the number of results, with/out pagination
+  * ability to limit the number of results, with ou without pagination
   * support for constraints unions (ie.,  http://api.example.org/city?city_id=12,13,14)
+  * hookable through events and filters
   * abstract and replaceable objects serialization
-  * serialization as XML or JSON feeds
+  * full HTTP support (GET, POST, PUT, DELETE)
 
 
 ## How to install
@@ -86,7 +88,7 @@ This will generate:
            class:   sfObjectRouteCollection
            options:
              model:   Post
-             actions: [ create, list, delete ]
+             actions: [ create, delete, list, update ]
              module:  post
              column:  id
              format:  xml
@@ -100,12 +102,53 @@ This will generate:
  * after a first request has been made to the REST module, the cache directory will contain the code of the generated module, and particularly the code of the "autopostActions" class, which you should check in order to understand the way the plugin works.
 
 
-You should be able to see your posts as a XML feed at http://api.example.com/post/
+You should be able to see your posts as a JSON feed at http://api.example.com/post.json
 
 
-## Service configuration
+## Main configuration
 
-As for Symfony's admin-generator, the REST generator generates code on-the-fly,
+Before configuring the content of the response of the webservice, the first
+most important configuration steps must be undergone. They address some
+general concerns which impact security, stability and define what the
+webservice is supposed to do:
+
+ * which types of operations does the webservice support? Only fetching objects, or also creating/updating/deleting it?
+ * how does one access to the webservice? Which are the main security guidelines?
+
+### Allowed operations
+
+The REST web service supports four different operations:
+
+ * getting a list of items ("list"): http://api.example.com/post.json (`GET` method),
+ * creating a new item ("create"): http://api.example.com/post.json (`POST` method),
+ * updating an existing item ("update"): http://api.example.com/post/123.json (`PUT` method, the value "123" must be replaced with the primary key of the object to update),
+ * deleting an existing item ("delete"): http://api.example.com/post/123.json (`DELETE` method, the value "123" must be replaced with the primary key of the object to delete),
+
+Each of these operations can be allowed or forbidden in the routing file,
+with the `actions` key: only enable the ones that you want to use.
+
+### Security guidelines
+
+You should never forget that exposing a webservice with write access may harm
+your data. Because of a miss of attention in the way your webservice is
+secured, you could lose some important data, or have it be altered while it
+shouldn't.
+
+First, be sure to only allow the strictly required operations. If the client
+do not have to delete items with the webservice, then disable this action in
+the `routing.yml` file.
+
+Second, consider a way to make your webservice more secure:
+
+ * use SSL whenever possible, so that the posted data do not get intercepted and altered by a third party (man in the middle),
+ * use HTTP authentication,
+ * use a stronger / more extensible authentication system (OAuth for example),
+ * deliver unique API keys to your clients, and check the usage that they do of the API.
+
+
+## Detailed service configuration
+
+As for symfony's admin-generator, the REST generator generates code on-the-fly,
 depending on the configuration done in the `generator.yml` file.
 
 Here is the default content of the `generator.yml` file:
@@ -122,11 +165,13 @@ Here is the default content of the `generator.yml` file:
         #        formats_enabled:               [ xml, json ]    # enabled formats
         #        separator:                     ','     # separator used for multiple filters
               get:
+        #        additional_params:             []      # list here additional params names, which are not object properties
+        #        default_format:                json    # the default format of the response. If not set, will default to json. Accepted values are "xml" or "json"
         #        display:                       []      # list here fields to render in the response
         #        embed_relations:               []      # list here relations to embed in the response
-        #        global_additional_fields:      []      # list here additionnal calculated global fields
+        #        global_additional_fields:      []      # list here additional calculated global fields
         #        max_items:                     0       # uncomment to fix an absolute limit to the number of items in the response
-        #        object_additional_fields:      []      # list here additionnal calculated fields
+        #        object_additional_fields:      []      # list here additional calculated fields
         #        pagination_enabled:            false   # set to true to activate the pagination
         #        pagination_custom_page_size:   false   # set to true to allow the client to pass a page_size parameter
         #        pagination_page_size:          100     # the default number of items in a page
@@ -160,30 +205,55 @@ decoration options that are used during the (de-)serialization. It might be:
 #### formats_enabled
 
 This contains the list of the formats allowed in the communication with the
-API. The default allowed formats are json and XML, XML being the default
+API. The default allowed formats are JSON and XML, JSON being the default
 format.
 
 This means that you can call a resource at the following URIs:
 
-  * http://api.example.com/post will return a XML formatted list of the posts,
+  * http://api.example.com/post will return a JSON formatted list of the posts,
   * http://api.example.com/post.xml will return a XML formatted list of the posts,
   * http://api.example.com/post.json will return a JSON formatted list of the posts.
 
 Would you want to add a new serialization format, you should add this format
-in the generator.yml, and create a serializer. See examples in the
+in the `generator.yml`, and create a serializer. See examples in the
 `lib/serializer` directory of the plugin.
 
 
 #### separator
 
 The separator to use in url when passing objects primary keys. The generated
-module allows to require several ressources identified by their ids:
+module allows to require several resources identified by their ids:
 http://api.example.com/post/?id=12,17,19
 
 
 ### get
 
 The `get` option lists several options specific to the "get" operation:
+
+
+#### additional_params
+
+The `default_format` option allows to define an array of parameter names,
+which the webservice will accept.
+
+The validation of the parameters  in the generator is rather strict, and for
+every unrecognised parameter passed to the service, the generator will launch
+an exception. The option allows not to launch this exception for certain
+parameter types, even if these parameters do not actually get used by the
+generator.
+
+The purpose of this parameter is to allow third-party params to be passed to
+the service. For instance, you might want to pass a "`token`" or "`api_key`"
+parameter, which could then be used to check if the client is allowed to use
+the service.
+
+#### default_format
+
+The `default_format` option allows to define the default serialization format
+when no format is asked for in the request. The accepted values are "json" or
+"xml", or any other serialization format that you could develop (see the
+"Serialization" paragraph). If this parameter is not set, the generator will
+default to a "json" serializer.
 
 
 #### display
@@ -197,12 +267,12 @@ parameter:
               get:
                 display:                       [ title, author_id ]
 
-If this option is left empty, all the fieds of the model will be rendered.
+If this option is left empty, all the fields of the model will be rendered.
 
 #### embed_relations
 
 The `embed_relations` options contains the list of the Doctrine relations to
-be embedded. It might be 1-n or n-n relations, which content will be embeded
+be embedded. It might be 1-n or n-n relations, which content will be embedded
 in each object. Here is a valid configuration for our "Post" model:
 
             config:
@@ -236,7 +306,7 @@ Several things to consider:
 
 #### global_additional_fields
 
-In some case, you might want to embed some additionnal fields in the XML or
+In some case, you might want to embed some additional fields in the XML or
 JSON response. For instance, you might want to include the total number of
 posts, an average price, etc.
 
@@ -250,9 +320,9 @@ configuration:
                 global_additional_fields:                       [ TotalPosts ]
 
 This will create an empty method, which has to be manually overridden in the
-generated module, in order to include the additionnal field of your choice:
+generated module, in order to include the additional field of your choice:
 
-    public function embedAdditionalTotalPosts($params)
+    public function embedGlobalAdditionalTotalPosts($params)
     {
       $totalObjects = count($this->objects);
       $this->objects['NbObjects'] = $totalObjects;
@@ -270,7 +340,7 @@ There is by default no limit. Setting this key to 0 will disable the limit.
 
 #### object_additional_fields
 
-The `object_additional_fields` contains the list of the additionnal fields
+The `object_additional_fields` contains the list of the additional fields
 that have to be embedded in each item of the response. For instance, if you
 want to add a field `NbWords`, which would give the number of words in the
 body of the post, use the following configuration:
@@ -280,7 +350,7 @@ body of the post, use the following configuration:
                 object_additional_fields:                       [ NbWords ]
 
 This will create an empty method, which has to be manually overridden in the
-generated module, in order to include the additionnal field of your choice:
+generated module, in order to include the additional field of your choice:
 
     public function embedAdditionalNbWords($item, $params)
     {
@@ -295,7 +365,8 @@ the `embed_relations` option):
  * embed the relation
  * use the `object_additional_fields` option to unset the non-desired fields.
 
-The embedAdditionalXXX methods will always look like:
+The `embedAdditionalXXX()` methods should always have the following form (the
+generator generates this code as comments):
 
     public function embedAdditionalXXXX($item, $params)
     {
@@ -350,14 +421,17 @@ string, which will be used to select the matching items.
 
 For instance, you might want to get only the posts of a certain category
 using a category_id parameter in the request. If you want to allow the client
-to request the posts of several categories, you have to explicitely allow it,
-as it may create more complex (ie. ressource-consuming and slow) requests. In
+to request the posts of several categories, you have to explicitly allow it,
+as it may create more complex (ie. resource-consuming and slow) requests. In
 that goal, the key `multiple` has to be set to `true` for this fieldname:
 
             config:
               get:
                 filters:
                   category_id:                  { multiple: true }
+
+This will allow to call the webservice with several category_ids at once, with
+a request of the form http://api.example.org/post/?category_id=1,4,5
 
 For the dates fields, you might want to tell the plugin which date format is
 accepted. For example:
@@ -367,25 +441,54 @@ accepted. For example:
                 filters:
                   created_at:                  { date_format: 'd-m-Y' }
 
+### Other configuration variables
+
+Some other configuration variables are not present in the default configuration file:
+
+ * the `actions_base_class` parameter allows to change the name of the base action class which is extended by the module's action class. This permits to use your own action class, which may package several methods which you will want to use in several REST modules.
+
+
 
 ## Serialization
 
 The response to a get request is formatted as a XML feed or a JSON array. The
-XML  serializer generates a valid feed, enclosing the content of a field in
+XML serializer generates a valid feed, enclosing the content of a field in
 CDATA sections if necessary.
 
 The serialization is done directly in the action, not in the template, in
 order to improve the performance when output escaping is enabled.
 
 
+## Events
+
+As of version 0.9.1, the plugin uses events at several places, in order to
+improve to overload and extend the default behavior.
+
+Here is a list of the supported event names :
+
+ * `sfDoctrineRestGenerator.filter_error_output`: This event is launched in order to filter the error message and enable its customisation
+ * `sfDoctrineRestGenerator.filter_results`: This event is launched in order to filter the query result array (add, remove or changes some keys of it). Note that you can achieve the same thing by using the `object_additional_fields` parameter in the `generator.yml`
+ * `sfDoctrineRestGenerator.get.pre`: This event gets fired at the very beginning of a request (at the beginning of `executeIndex()`)
+
+
 ## Whishlist
- * more serializers (BSON for example). Currently, the plugin only allows to serialize the resultsets as a XML or JSON feeds (see the chapter "Serialization"). Mobile clients, which require the most compact possible streams, would take benefit from a JSON or even a BSON serialization.
+
+If you use the plugin and want to help me improve it, you could consider
+picking one of the following topics:
+
+ * possibility to nest the embed_relations parameter (and not limit it at one level only)
+ * possibility to disable events notification / filtering (performance)
+ * more serializers ([BSON](http://bsonspec.org/) or RDF for example). Currently, the plugin only allows to serialize the resultsets as a XML or JSON feeds (see the chapter "Serialization"). Mobile clients, which require the most compact possible streams, would take benefit from a JSON or even a BSON serialization.
+ * possibility to generate client libraries (sfDoctrineRestClientGenerator ?)
+ * possibility to generate unit tests
+ * possibility to generate API documentation
+ * document authentication solutions
  * all the possible feedback!
 
 
 ## Contribute to the plugin, ask for help
 
-Please ask for help on how to use the plugin on Symfony's users mailing list.
+Please ask for help on how to use the plugin on symfony's users mailing list.
 You can also send me a mail directly : xavier@lacot.org.
 
 
@@ -397,9 +500,23 @@ licensed under the MIT license.
 
 ## Changelog
 
+### version 0.9.2 - 2010-07-01
+
+ * Added events (thanks to Matthew Penrice)
+ * Added a default_format parameter (thanks to Matthew Penrice)
+ * Added PUT support
+ * Switched to json as default serializer (faster and less verbose)
+ * Improved the documentation
+
+
+### version 0.9.1 - 2010-05-14
+
+Fixed a typo in the previous release
+
+
 ### version 0.9 - 2010-05-14
 
-Added a json serializer.
+Added a JSON serializer.
 
 
 ### version 0.8 - 2010-05-09

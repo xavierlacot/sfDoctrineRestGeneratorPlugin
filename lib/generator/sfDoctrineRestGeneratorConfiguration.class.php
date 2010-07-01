@@ -21,6 +21,8 @@ class sfDoctrineRestGeneratorConfiguration
         'separator'                   => $this->getSeparator()
       ),
       'get'     => array(
+        'additional_params'           => $this->getAdditionalParams(),
+        'default_format'              => $this->getDefaultFormat(),
         'display'                     => $this->getDisplay(),
         'embed_relations'             => $this->getEmbedRelations(),
         'fields'                      => $this->getFieldsGet(),
