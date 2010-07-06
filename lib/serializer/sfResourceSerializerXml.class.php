@@ -12,22 +12,20 @@ class sfResourceSerializerXml extends sfResourceSerializer
     return $this->arrayToXml($array, $rootNodeName, 0);
   }
 
-  public function arrayToXml($array, $rootNodeName = 'data', $level = 0)
+  protected function arrayToXml($array, $rootNodeName = 'data', $level = 0)
   {
     $xml = '';
 
     if (0 == $level)
     {
-      $xml .= '<?xml version="1.0" encoding="utf-8"?><'.ucfirst(sfInflector::camelize($rootNodeName)).'s>';
+      $xml .= '<?xml version="1.0" encoding="utf-8"?><'.$this->camelize($rootNodeName).'s>';
     }
 
     foreach ($array as $key => $value)
     {
-      $key = ucfirst(sfInflector::camelize($key));
-
       if (is_numeric($key))
       {
-        $key = ucfirst(sfInflector::camelize($rootNodeName));
+        $key = $this->camelize($rootNodeName);
       }
 
       if (is_array($value))
@@ -49,6 +47,8 @@ class sfResourceSerializerXml extends sfResourceSerializer
 
         if ($trimed_value !== '')
         {
+          $key = $this->camelize($key);
+
           if (htmlspecialchars($trimed_value) != $trimed_value)
           {
             $xml .= '<'.$key.'><![CDATA['.$trimed_value.']]></'.$key.'>';
@@ -63,7 +63,7 @@ class sfResourceSerializerXml extends sfResourceSerializer
 
     if (0 == $level)
     {
-      $xml .= '</'.ucfirst(sfInflector::camelize($rootNodeName)).'s>';
+      $xml .= '</'.$this->camelize($rootNodeName).'s>';
     }
 
     return $xml;
