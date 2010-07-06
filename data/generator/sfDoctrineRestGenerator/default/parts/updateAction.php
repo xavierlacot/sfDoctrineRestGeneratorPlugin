@@ -25,6 +25,7 @@
     	$this->getResponse()->setStatusCode(406);
       $serializer = sfResourceSerializer::getInstance($format);
       $this->getResponse()->setContentType($serializer->getContentType());
+      $error = $e->getMessage();
 
       // event filter to enable customisation of the error message.
       $result = $this->dispatcher->filter(
