@@ -27,6 +27,10 @@ class sfResourceSerializerXml extends sfResourceSerializer
       {
         $key = $this->camelize($rootNodeName);
       }
+      else
+      {
+        $key = $this->camelize($key);
+      }
 
       if (is_array($value))
       {
@@ -47,8 +51,6 @@ class sfResourceSerializerXml extends sfResourceSerializer
 
         if ($trimed_value !== '')
         {
-          $key = $this->camelize($key);
-
           if (htmlspecialchars($trimed_value) != $trimed_value)
           {
             $xml .= '<'.$key.'><![CDATA['.$trimed_value.']]></'.$key.'>';
