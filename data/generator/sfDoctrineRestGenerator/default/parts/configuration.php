@@ -34,6 +34,12 @@ abstract class Base<?php echo ucfirst($this->getModuleName()) ?>GeneratorConfigu
 <?php unset($this->config['get']['embed_relations']) ?>
   }
 
+  public function getFormatsEnabled()
+  {
+    return <?php echo $this->asPhp(isset($this->config['default']['formats_enabled']) ? $this->config['default']['formats_enabled'] : array('json', 'xml')) ?>;
+<?php unset($this->config['default']['formats_enabled']) ?>
+  }
+
 <?php include dirname(__FILE__).'/fieldsConfiguration.php' ?>
 
   public function getGlobalAdditionalFields()
