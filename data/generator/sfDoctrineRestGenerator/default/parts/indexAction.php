@@ -89,18 +89,43 @@
 
     $this->embedGlobalAdditional<?php echo $field ?>($params);
 <?php endforeach; ?>
-
-<?php $display = $this->configuration->getValue('get.display'); ?>
+<?php
+$display = $this->configuration->getValue('get.display');
+$hide = $this->configuration->getValue('get.hide');
+?>
 <?php if (count($display) > 0): ?>
-    $accepted_keys = <?php echo var_export($display, true); ?>;
+
+<?php if (count($hide) > 0): ?>
+    $accepted_keys = <?php echo var_export(array_flip(array_merge(array_diff($display, $hide), $embed_relations)), true); ?>;
+<?php else: ?>
+    $accepted_keys = <?php echo var_export(array_flip(array_merge($display, $embed_relations)), true); ?>;
+<?php endif; ?>
 
     foreach ($this->objects as $i => $object)
     {
-      foreach ($object as $key => $value)
+      $this->objects[$i] = array_intersect_key($object, $accepted_keys);
+    }
+<?php elseif (count($hide) > 0): ?>
+
+    $hidden_keys = <?php echo var_export(array_flip($hide), true); ?>;
+
+    foreach ($this->objects as $i => $object)
+    {
+      $this->objects[$i] = array_diff_key($object, $hidden_keys);
+    }
+<?php endif; ?>
+<?php $embedded_relations_hide = $this->configuration->getValue('get.embedded_relations_hide'); ?>
+<?php if (count($embedded_relations_hide) > 0): ?>
+
+    $embedded_relations_hide = <?php echo var_export($embedded_relations_hide, true); ?>;
+
+    foreach ($this->objects as $i => $object)
+    {
+      foreach ($embedded_relations_hide as $relation_name => $hidden_fields)
       {
-        if (!in_array($key, $accepted_keys))
+        if (isset($object[$relation_name]))
         {
-          unset($object[$key]);
+          $object[$relation_name] = array_diff_key($object[$relation_name], $hidden_fields);
         }
       }
 

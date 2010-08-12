@@ -12,7 +12,7 @@ for data exchange. Here are some key features :
   * serialization as XML or JSON feeds
   * possibility to embed related models
   * possibility to embed extra fields
-  * ability to limit the number of results, with ou without pagination
+  * ability to limit the number of results, with or without pagination
   * support for constraints unions (ie.,  http://api.example.org/city?city_id=12,13,14)
   * hookable through events and filters
   * abstract and replaceable objects serialization
@@ -167,9 +167,12 @@ Here is the default content of the `generator.yml` file:
               get:
         #        additional_params:             []      # list here additional params names, which are not object properties
         #        default_format:                json    # the default format of the response. If not set, will default to json. Accepted values are "xml" or "json"
-        #        display:                       []      # list here fields to render in the response
+        #        display:                       []      # list here the fields to render in the response
         #        embed_relations:               []      # list here relations to embed in the response
-        #        global_additional_fields:      []      # list here additional calculated global fields
+        #        embedded_relations_hide:
+        #          Category:                    [id]    # you can hide fields inside a certain embedded relation
+        #        global_additional_fields:      []      # list here additionnal calculated global fields
+        #        hide:                          [id]    # list here the fields you don't want to expose
         #        max_items:                     0       # uncomment to fix an absolute limit to the number of items in the response
         #        object_additional_fields:      []      # list here additional calculated fields
         #        pagination_enabled:            false   # set to true to activate the pagination
@@ -247,6 +250,7 @@ the service. For instance, you might want to pass a "`token`" or "`api_key`"
 parameter, which could then be used to check if the client is allowed to use
 the service.
 
+
 #### default_format
 
 The `default_format` option allows to define the default serialization format
@@ -259,7 +263,7 @@ default to a "json" serializer.
 #### display
 
 The `display` option contains the list of the fields to output in the XML or
-JSON feed. For example with the previously defines "Post" model, you can
+JSON feed. For example with the previously defined "Post" model, you can
 choose to only display the title and the author's id by changing this
 parameter:
 
@@ -268,6 +272,10 @@ parameter:
                 display:                       [ title, author_id ]
 
 If this option is left empty, all the fields of the model will be rendered.
+
+You might also be interested in the `hide` option, which allows to hide some
+fields of the model.
+
 
 #### embed_relations
 
@@ -300,8 +308,20 @@ This configuration will produce a feed like:
 
 Several things to consider:
 
-  * You cannot define the fields to render in the related objects.
-  * The response contains both the `PostCategoryId` field and the `PostCategory.Id` fields. You can save some bytes by using the `display` option.
+  * You cannot define the fields to render in the related objects, but you can hide certain with `embedded_relations_hide` option.
+  * The response contains both the `PostCategoryId` field and the `PostCategory.Id` fields. You can save some bytes by using the `display` or the `hide` options, in order to remove the `PostCategoryId` field.
+
+
+#### embedded_relations_hide
+
+You may want to hide some fields from the embedded relations. For instance,
+you could want to hide the `id` field from the PostCategory model. This can be
+done using the `embedded_relations_hide` configuration option:
+
+            config:
+              get:
+                embedded_relations_hide:
+                  PostCategory:                     [id]
 
 
 #### global_additional_fields
@@ -327,6 +347,20 @@ generated module, in order to include the additional field of your choice:
       $totalObjects = count($this->objects);
       $this->objects['NbObjects'] = $totalObjects;
     }
+
+#### hide
+
+The `hide` option contains the list of the fields to hide in the XML or
+JSON feed. For example with the previously defined "Post" model, you can
+choose to hide its `id` by changing this parameter:
+
+            config:
+              get:
+                hide:           [id]
+
+This option has the priority over the "display" option, which means that if
+both options are used, only the fields that are not listed in the "hide"
+option will be rendered.
 
 
 #### max_items
@@ -423,7 +457,7 @@ For instance, you might want to get only the posts of a certain category
 using a category_id parameter in the request. If you want to allow the client
 to request the posts of several categories, you have to explicitly allow it,
 as it may create more complex (ie. resource-consuming and slow) requests. In
-that goal, the key `multiple` has to be set to `true` for this fieldname:
+that goal, the key `multiple` has to be set to `true` for this field name:
 
             config:
               get:
@@ -499,6 +533,12 @@ licensed under the MIT license.
 
 
 ## Changelog
+
+### version 0.9.3 - 2010-08-12
+
+ * Added `hide` and `embedded_relations_hide` options (thanks to Pascal Borreli)
+ * Made the fields filtering faster
+
 
 ### version 0.9.2 - 2010-07-01
 

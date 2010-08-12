@@ -12,9 +12,12 @@ generator:
       get:
 #        additional_params:             []      # list here additionnal params names, which are not object properties
 #        default_format:                json    # the default format of the response. If not set, will default to json. accepted values are "xml" or "json"
-#        display:                       []      # list here fields to render in the response
+#        display:                       []      # list here the fields to render in the response
 #        embed_relations:               []      # list here relations to embed in the response
+#        embedded_relations_hide:
+#          Category:                    [id]    # you can hide fields inside a certain embedded relation
 #        global_additional_fields:      []      # list here additionnal calculated global fields
+#        hide:                          [id]    # list here the fields you don't want to expose
 #        max_items:                     0       # uncomment to fix an absolute limit to the number of items in the response
 #        object_additional_fields:      []      # list here additionnal calculated fields
 #        pagination_enabled:            false   # set to true to activate the pagination

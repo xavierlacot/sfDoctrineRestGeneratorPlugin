@@ -34,6 +34,19 @@ abstract class Base<?php echo ucfirst($this->getModuleName()) ?>GeneratorConfigu
 <?php unset($this->config['get']['embed_relations']) ?>
   }
 
+  public function getEmbeddedRelationsHide()
+  {
+    $embedded_relations_hide = <?php echo $this->asPhp(isset($this->config['get']['embedded_relations_hide']) ? $this->config['get']['embedded_relations_hide'] : array()) ?>;
+
+    foreach ($embedded_relations_hide as $relation_name => $hidden_fields)
+    {
+      $embedded_relations_hide[$relation_name] = array_flip($hidden_fields);
+    }
+
+    return $embedded_relations_hide;
+<?php unset($this->config['get']['embedded_relations_hide']) ?>
+  }
+
   public function getFormatsEnabled()
   {
     return <?php echo $this->asPhp(isset($this->config['default']['formats_enabled']) ? $this->config['default']['formats_enabled'] : array('json', 'xml')) ?>;
@@ -46,6 +59,12 @@ abstract class Base<?php echo ucfirst($this->getModuleName()) ?>GeneratorConfigu
   {
     return <?php echo $this->asPhp(isset($this->config['get']['global_additional_fields']) ? $this->config['get']['global_additional_fields'] : array()) ?>;
 <?php unset($this->config['get']['global_additional_fields']) ?>
+  }
+
+  public function getHide()
+  {
+    return <?php echo $this->asPhp(isset($this->config['get']['hide']) ? $this->config['get']['hide'] : array()) ?>;
+<?php unset($this->config['get']['hide']) ?>
   }
 
   public function getMaxItems()

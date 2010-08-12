@@ -6,14 +6,23 @@
    */
   public function query($params)
   {
-    $q = Doctrine_Query::create();
-<?php $display = $this->configuration->getValue('get.display'); ?>
+    $q = Doctrine_Query::create()
+<?php
+$display = $this->configuration->getValue('get.display');
+$embed_relations = $this->configuration->getValue('get.embed_relations');
+
+$fields = $display;
+foreach ($embed_relations as $relation_name)
+{
+  $fields[] = $relation_name.'.*';
+}
+?>
 <?php if (count($display) > 0): ?>
-<?php $display = implode(', ', $display); ?>
-$q->select('<?php echo $display ?>');
+<?php $display = implode(', ', $fields); ?>
+      ->select('<?php echo $display ?>')
 <?php endif; ?>
 
-    $q->from($this->model.' '.$this->model)<?php $embed_relations = $this->configuration->getValue('get.embed_relations'); ?>
+      ->from($this->model.' '.$this->model)
 <?php foreach ($embed_relations as $embed_relation): ?>
 <?php if (!$this->isManyToManyRelation($embed_relation)): ?>
 
