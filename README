@@ -534,7 +534,7 @@ licensed under the MIT license.
 
 ## Changelog
 
-### version 0.9.3 - 2010-08-12
+### version 0.9.3 - 2010-08-13
 
  * Added `hide` and `embedded_relations_hide` options (thanks to Pascal Borreli)
  * Made the fields filtering faster
