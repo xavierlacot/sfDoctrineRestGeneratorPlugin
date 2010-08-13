@@ -68,7 +68,11 @@
 <?php foreach ($primaryKeys as $primaryKey): ?>
     $isset_pk = (!isset($isset_pk) || $isset_pk) && isset($params['<?php echo $primaryKey ?>']);
 <?php endforeach; ?>
-    $this->forward404Unless(!$isset_pk || ($isset_pk && count($this->objects) > 0));
+    if ($isset_pk && count($this->objects) == 0)
+    {
+      $request->setRequestFormat($format);
+      $this->forward404();
+    }
 
 <?php $embed_relations = $this->configuration->getValue('get.embed_relations'); ?>
 <?php foreach ($embed_relations as $embed_relation): ?>
