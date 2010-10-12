@@ -1,13 +1,62 @@
-<?php $embed_relations = $this->configuration->getValue('get.embed_relations'); ?>
+<?php
+$embed_relations = $this->configuration->getValue('get.embed_relations');
+$pk = current($this->getPrimaryKeys());
+?>
 <?php foreach ($embed_relations as $embed_relation): ?>
 <?php if ($this->isManyToManyRelation($embed_relation)): ?>
 
   /**
-   * Loads related object to the currently selected objects
+   * Loads "<?php echo $embed_relation ?>" objects related to the currently
+   * selected objects
    */
   public function embedManyToMany<?php echo $embed_relation ?>()
   {
-    $this->objects->loadRelated('<?php echo $embed_relation ?>');
+    // get the list of the object's ids
+    // we assume there's only one primary key
+    $list = array();
+
+    foreach ($this->objects as $object)
+    {
+      $value = $object['<?php echo $pk ?>'];
+
+      if ($value !== null)
+      {
+        $list[] = $value;
+      }
+    }
+
+    if (0 == count($list))
+    {
+      return;
+    }
+
+    // retrieve the objects related to these primary keys
+    $relation_name = '<?php echo $embed_relation ?>';
+    $query = Doctrine::getTable($relation_name)->createQuery();
+    $rel = Doctrine::getTable($this->model)->getRelation($relation_name);
+    $dql = $rel->getRelationDql(count($list), 'collection');
+    $collection = $query->query($dql, $list, Doctrine_Core::HYDRATE_ARRAY);
+    $local_key = $rel->getLocal();
+    $related = array();
+
+    // and attach them to the right objects
+    foreach ($collection as $relation)
+    {
+      if (!isset($related[$relation[$local_key]]))
+      {
+        $related[$relation[$local_key]] = array();
+      }
+
+      $related[$relation[$local_key]][] = $relation[$relation_name];
+    }
+
+    foreach ($this->objects as $key => $object)
+    {
+      if ($object['<?php echo $pk ?>'] && isset($related[$object['<?php echo $pk ?>']]))
+      {
+        $this->objects[$key][$relation_name] = $related[$object['<?php echo $pk ?>']];
+      }
+    }
   }
 <?php endif; ?><?php endforeach; ?>
 <?php $object_additional_fields = $this->configuration->getValue('get.object_additional_fields'); ?>
