@@ -37,6 +37,7 @@ $pk = current($this->getPrimaryKeys());
     $dql = $rel->getRelationDql(count($list), 'collection');
     $collection = $query->query($dql, $list, Doctrine_Core::HYDRATE_ARRAY);
     $local_key = $rel->getLocal();
+    $related_class = $rel->getClass();
     $related = array();
 
     // and attach them to the right objects
@@ -47,7 +48,7 @@ $pk = current($this->getPrimaryKeys());
         $related[$relation[$local_key]] = array();
       }
 
-      $related[$relation[$local_key]][] = $relation[$relation_name];
+      $related[$relation[$local_key]][] = $relation[$related_class];
     }
 
     foreach ($this->objects as $key => $object)
