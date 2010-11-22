@@ -65,7 +65,7 @@ EOF;
 
 
 EOF
-      , $model, $model, $module, $primaryKey).$content;
+      , $module, $model, $module, $primaryKey).$content;
 
       $this->logSection('file+', $routing);
       file_put_contents($routing, $content);

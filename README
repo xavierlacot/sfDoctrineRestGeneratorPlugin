@@ -84,7 +84,7 @@ This will generate:
 
  * a new route in the `routing.yml` file of the "api" application :
 
-         Post:
+         post:
            class:   sfObjectRouteCollection
            options:
              model:   Post
@@ -103,6 +103,18 @@ This will generate:
 
 
 You should be able to see your posts as a JSON feed at http://api.example.com/post.json
+
+If this is not the case, please check in the routing.yml file that the route name comes with a minus "p". If you want to change the uri at which the API is exposed, simply change the route name, and clear the cache of your project. The following configuration will expose the API at http://api.example.com/myPostAPI.json:
+
+         myPostAPI:
+           class:   sfObjectRouteCollection
+           options:
+             model:   Post
+             actions: [ create, delete, list, update ]
+             module:  post
+             column:  id
+             format:  xml
+
 
 
 ## Main configuration
