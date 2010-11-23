@@ -9,7 +9,7 @@ for data exchange. Here are some key features :
   * REST module generation "à la admin-generator"
   * easy-to-customize generator.yml configuration file
   * validation of the parameters passed to the service using symfony validators
-  * serialization as XML or JSON feeds
+  * serialization as XML, YAML or JSON feeds
   * possibility to embed related models
   * possibility to embed extra fields
   * ability to limit the number of results, with or without pagination
@@ -174,11 +174,12 @@ Here is the default content of the `generator.yml` file:
               default:
         #        fields:                                # list here the fields.
         #          created_at:                  { date_format: 'Y-m-d\TH:i:s', tag_name: 'created' }      # for instance
-        #        formats_enabled:               [ xml, json ]    # enabled formats
+        #        formats_enabled:               [ json, xml, yaml ]    # enabled formats
+        #        formats_strict:                true
         #        separator:                     ','     # separator used for multiple filters
               get:
         #        additional_params:             []      # list here additional params names, which are not object properties
-        #        default_format:                json    # the default format of the response. If not set, will default to json. Accepted values are "xml" or "json"
+        #        default_format:                json    # the default format of the response. If not set, will default to json. Accepted values are  "json", "xml" or "yaml"
         #        display:                       []      # list here the fields to render in the response
         #        embed_relations:               []      # list here relations to embed in the response
         #        embedded_relations_hide:
@@ -220,8 +221,8 @@ decoration options that are used during the (de-)serialization. It might be:
 #### formats_enabled
 
 This contains the list of the formats allowed in the communication with the
-API. The default allowed formats are JSON and XML, JSON being the default
-format.
+API. The default allowed formats are JSON, XML and YAML, JSON being the
+default format.
 
 This means that you can call a resource at the following URIs:
 
@@ -231,7 +232,16 @@ This means that you can call a resource at the following URIs:
 
 Would you want to add a new serialization format, you should add this format
 in the `generator.yml`, and create a serializer. See examples in the
-`lib/serializer` directory of the plugin.
+`lib/serializer` directory of the plugin. You may also want to read the
+section "How to create a new serialization format" below.
+
+
+#### formats_strict
+
+This indicates whether or not the api should return an error when an
+un-handled format is requested or posted. If the option is activated (it is
+by default), the module will display an error. If not, the module will use
+the format by default.
 
 
 #### separator
@@ -266,10 +276,10 @@ the service.
 #### default_format
 
 The `default_format` option allows to define the default serialization format
-when no format is asked for in the request. The accepted values are "json" or
-"xml", or any other serialization format that you could develop (see the
-"Serialization" paragraph). If this parameter is not set, the generator will
-default to a "json" serializer.
+when no format is asked for in the request. The accepted values are "json",
+"xml" or "yaml", or any other serialization format that you could develop
+(see the "Serialization" paragraph). If this parameter is not set, the
+generator will default to a "json" serializer.
 
 
 #### display
@@ -505,6 +515,54 @@ The serialization is done directly in the action, not in the template, in
 order to improve the performance when output escaping is enabled.
 
 
+### How to create a new serialization format?
+
+Creating a new serialization format, or overriding an existing serializer,
+can simply be done by creating a "sfResourceSerializerXXX" class, where "XXX"
+stands for the format you want to implement or override.
+
+Here is for instance how the json serializer looks like:
+
+      class sfResourceSerializerJson extends sfResourceSerializer
+      {
+        public function getContentType()
+        {
+          return 'application/json';
+        }
+
+        public function serialize($array, $rootNodeName = 'data')
+        {
+          return json_encode($array);
+        }
+
+        public function unserialize($payload)
+        {
+          return json_decode($array);
+        }
+      }
+
+Would you like to add a "data" root node to the output json feed, you should
+simply create a file in the `lib/serializers` directory of you project:
+
+      class sfResourceSerializerJson extends sfResourceSerializer
+      {
+        public function getContentType()
+        {
+          return 'application/json';
+        }
+
+        public function serialize($array, $rootNodeName = 'data')
+        {
+          return json_encode(array($rootNodeName => $array));
+        }
+
+        public function unserialize($payload)
+        {
+          return json_decode(array_shift($payload), true);
+        }
+      }
+
+
 ## Events
 
 As of version 0.9.1, the plugin uses events at several places, in order to
@@ -524,7 +582,7 @@ picking one of the following topics:
 
  * possibility to nest the embed_relations parameter (and not limit it at one level only)
  * possibility to disable events notification / filtering (performance)
- * more serializers ([BSON](http://bsonspec.org/) or RDF for example). Currently, the plugin only allows to serialize the resultsets as a XML or JSON feeds (see the chapter "Serialization"). Mobile clients, which require the most compact possible streams, would take benefit from a JSON or even a BSON serialization.
+ * more serializers ([BSON](http://bsonspec.org/) or RDF for example). Currently, the plugin only allows to serialize the resultsets as a XML, YAML or JSON feeds (see the chapter "Serialization"). Mobile clients, which require the most compact possible streams, would take benefit from a JSON or even a BSON serialization.
  * possibility to generate client libraries (sfDoctrineRestClientGenerator ?)
  * possibility to generate unit tests
  * possibility to generate API documentation
@@ -545,6 +603,14 @@ licensed under the MIT license.
 
 
 ## Changelog
+
+### trunk
+
+ * Added the `formats_strict` option
+ * Improved the deserialization abstraction
+ * Added a YAML serializer
+ * Improved the documentation on these topics
+
 
 ### version 0.9.3 - 2010-08-13
 

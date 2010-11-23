@@ -19,6 +19,7 @@ class sfDoctrineRestGeneratorConfiguration
       'default' => array(
         'fields'                      => $this->getFieldsDefault(),
         'formats_enabled'             => $this->getFormatsEnabled(),
+        'formats_strict'              => $this->getFormatsStrict(),
         'separator'                   => $this->getSeparator()
       ),
       'get'     => array(

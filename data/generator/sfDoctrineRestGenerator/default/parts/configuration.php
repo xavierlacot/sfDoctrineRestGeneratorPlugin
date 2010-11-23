@@ -49,8 +49,14 @@ abstract class Base<?php echo ucfirst($this->getModuleName()) ?>GeneratorConfigu
 
   public function getFormatsEnabled()
   {
-    return <?php echo $this->asPhp(isset($this->config['default']['formats_enabled']) ? $this->config['default']['formats_enabled'] : array('json', 'xml')) ?>;
+    return <?php echo $this->asPhp(isset($this->config['default']['formats_enabled']) ? $this->config['default']['formats_enabled'] : array('json', 'xml', 'yaml')) ?>;
 <?php unset($this->config['default']['formats_enabled']) ?>
+  }
+
+  public function getFormatsStrict()
+  {
+    return <?php echo $this->asPhp(isset($this->config['default']['formats_strict']) ? $this->config['default']['formats_strict'] : true) ?>;
+<?php unset($this->config['default']['formats_strict']) ?>
   }
 
 <?php include dirname(__FILE__).'/fieldsConfiguration.php' ?>

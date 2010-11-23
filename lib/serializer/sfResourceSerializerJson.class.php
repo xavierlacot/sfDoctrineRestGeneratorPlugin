@@ -11,4 +11,9 @@ class sfResourceSerializerJson extends sfResourceSerializer
   {
     return json_encode($array);
   }
+
+  public function unserialize($payload)
+  {
+    return json_decode($payload, true);
+  }
 }

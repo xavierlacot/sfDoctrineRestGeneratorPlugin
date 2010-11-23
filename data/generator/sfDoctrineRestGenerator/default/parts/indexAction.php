@@ -11,14 +11,7 @@
     // notify an event before the action's body starts
     $this->dispatcher->notify(new sfEvent($this, 'sfDoctrineRestGenerator.get.pre', array('params' => $params)));
 
-    $format = isset($params['sf_format']) ? $params['sf_format'] : '<?php echo $this->configuration->getValue('get.default_format') ?>';
     $request->setRequestFormat('html');
-
-    if (!in_array($format, <?php var_export($this->configuration->getValue('default.formats_enabled', array('json', 'xml'))) ?>))
-    {
-      $format = '<?php echo $this->configuration->getValue('get.default_format') ?>';
-    }
-
     unset($params['sf_format']);
     unset($params['module']);
     unset($params['action']);
@@ -35,12 +28,13 @@
 
     try
     {
+      $format = $this->getFormat();
       $this->validateIndex($params);
     }
     catch (Exception $e)
     {
     	$this->getResponse()->setStatusCode(406);
-      $serializer = sfResourceSerializer::getInstance($format);
+      $serializer = $this->getSerializer();
       $this->getResponse()->setContentType($serializer->getContentType());
       $error = $e->getMessage();
 
@@ -172,7 +166,7 @@ foreach ($fields as $field => $configuration)
     }
 <?php endif; ?>
 
-    $serializer = sfResourceSerializer::getInstance($format);
+    $serializer = $this->getSerializer();
     $this->getResponse()->setContentType($serializer->getContentType());
     $this->output = $serializer->serialize($this->objects, $this->model);
     unset($this->objects);

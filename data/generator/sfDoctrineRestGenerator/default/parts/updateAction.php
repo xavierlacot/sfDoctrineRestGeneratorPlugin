@@ -15,15 +15,8 @@
     }
     catch (Exception $e)
     {
-      $format = $request->getParameter('sf_format');
-
-      if (!in_array($format, <?php var_export($this->configuration->getValue('default.formats_enabled', array('json', 'xml'))) ?>))
-      {
-        $format = '<?php echo $this->configuration->getValue('get.default_format') ?>';
-      }
-
     	$this->getResponse()->setStatusCode(406);
-      $serializer = sfResourceSerializer::getInstance($format);
+      $serializer = $this->getSerializer();
       $this->getResponse()->setContentType($serializer->getContentType());
       $error = $e->getMessage();
 

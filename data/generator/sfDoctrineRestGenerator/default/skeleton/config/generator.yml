@@ -7,11 +7,12 @@ generator:
       default:
 #        fields:                                # list here the fields.
 #          created_at:                  { date_format: 'Y-m-d\TH:i:s', tag_name: 'created' }      # for instance
-#        formats_enabled:               [ xml, json ]    # enabled formats
+#        formats_enabled:               [ json, xml, yaml ]    # enabled formats
+#        formats_strict:                true
 #        separator:                     ','     # separator used for multiple filters
       get:
 #        additional_params:             []      # list here additionnal params names, which are not object properties
-#        default_format:                json    # the default format of the response. If not set, will default to json. accepted values are "xml" or "json"
+#        default_format:                json    # the default format of the response. If not set, will default to json. accepted values are "json", "xml" or "yaml"
 #        display:                       []      # list here the fields to render in the response
 #        embed_relations:               []      # list here relations to embed in the response
 #        embedded_relations_hide:

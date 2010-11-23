@@ -1,6 +1,6 @@
   public function getSortCustom()
   {
-    return <?php echo isset($this->config['get']['sort_custom']) ? $this->config['get']['sort_custom'] : false ?>;
+    return <?php echo $this->asPhp(isset($this->config['get']['sort_custom']) ? $this->config['get']['sort_custom'] : false) ?>;
 <?php unset($this->config['get']['sort_custom']) ?>
   }
 

@@ -24,7 +24,11 @@ class <?php echo $this->getGeneratedModuleName() ?>Actions extends <?php echo $t
 
 <?php include dirname(__FILE__).'/../../parts/getCreateValidators.php' ?>
 
+<?php include dirname(__FILE__).'/../../parts/getFormat.php' ?>
+
 <?php include dirname(__FILE__).'/../../parts/getIndexValidators.php' ?>
+
+<?php include dirname(__FILE__).'/../../parts/getSerializer.php' ?>
 
 <?php include dirname(__FILE__).'/../../parts/getUpdateValidators.php' ?>
 

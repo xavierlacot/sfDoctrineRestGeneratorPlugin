@@ -12,6 +12,11 @@ class sfResourceSerializerXml extends sfResourceSerializer
     return $this->arrayToXml($array, $rootNodeName, 0);
   }
 
+  public function unserialize($payload)
+  {
+    return @simplexml_load_string($payload);
+  }
+
   protected function arrayToXml($array, $rootNodeName = 'data', $level = 0)
   {
     $xml = '';

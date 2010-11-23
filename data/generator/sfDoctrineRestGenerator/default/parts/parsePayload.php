@@ -2,20 +2,12 @@
   {
     if ($force || !isset($this->_payload_array))
     {
-      $format = $this->getRequest()->getParameter('sf_format', '<?php echo $this->configuration->getValue('get.default_format') ?>');
+      $format = $this->getFormat();
+      $serializer = $this->getSerializer();
 
-      if (!in_array($format, <?php var_export($this->configuration->getValue('default.formats_enabled', array('json', 'xml'))) ?>))
+      if ($serializer)
       {
-        $format = '<?php echo $this->configuration->getValue('get.default_format') ?>';
-      }
-
-      if ('xml' == $format)
-      {
-    	  $payload_array = @simplexml_load_string($payload);
-      }
-      elseif ('json' == $format)
-      {
-    	  $payload_array = json_decode($payload, true);
+        $payload_array = $serializer->unserialize($payload);
       }
 
     	if (!isset($payload_array) || !$payload_array)

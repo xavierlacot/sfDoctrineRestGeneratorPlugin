@@ -38,4 +38,5 @@ abstract class sfResourceSerializer
   }
 
   abstract public function serialize($array, $rootNodeName = 'data');
+  abstract public function unserialize($payload);
 }
