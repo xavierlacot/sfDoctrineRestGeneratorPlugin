@@ -6,7 +6,7 @@
   public function executeUpdate(sfWebRequest $request)
   {
     $this->forward404Unless($request->isMethod(sfRequest::PUT));
-    $content = $request->getParameter('content');
+    $content = $request->getContent();
     $request->setRequestFormat('html');
 
     try
