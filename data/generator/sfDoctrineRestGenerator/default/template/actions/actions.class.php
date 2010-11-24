@@ -41,6 +41,12 @@ class <?php echo $this->getGeneratedModuleName() ?>Actions extends <?php echo $t
 <?php include dirname(__FILE__).'/../../parts/query.php' ?>
 <?php include dirname(__FILE__).'/../../parts/queryAdditionnal.php' ?>
 
+<?php include dirname(__FILE__).'/../../parts/queryExecute.php' ?>
+
+<?php include dirname(__FILE__).'/../../parts/queryFetchOne.php' ?>
+
+<?php include dirname(__FILE__).'/../../parts/showAction.php' ?>
+
 <?php include dirname(__FILE__).'/../../parts/updateAction.php' ?>
 
 <?php include dirname(__FILE__).'/../../parts/updateObjectFromRequest.php' ?>
@@ -50,6 +56,8 @@ class <?php echo $this->getGeneratedModuleName() ?>Actions extends <?php echo $t
 <?php include dirname(__FILE__).'/../../parts/validateCreate.php' ?>
 
 <?php include dirname(__FILE__).'/../../parts/validateIndex.php' ?>
+
+<?php include dirname(__FILE__).'/../../parts/validateShow.php' ?>
 
 <?php include dirname(__FILE__).'/../../parts/validateUpdate.php' ?>
 }

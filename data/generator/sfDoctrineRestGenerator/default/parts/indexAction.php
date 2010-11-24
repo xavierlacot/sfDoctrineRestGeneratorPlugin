@@ -1,5 +1,5 @@
   /**
-   * Retrieves a  colections of <?php echo $this->getModelClass() ?> objects
+   * Retrieves a  collection of <?php echo $this->getModelClass() ?> objects
    * @param   sfWebRequest   $request a request object
    * @return  string
    */
@@ -45,7 +45,7 @@
       return sfView::SUCCESS;
     }
 
-    $this->query($params);
+    $this->queryExecute($params);
 <?php $primaryKeys = $this->getPrimaryKeys(); ?>
 <?php foreach ($primaryKeys as $primaryKey): ?>
     $isset_pk = (!isset($isset_pk) || $isset_pk) && isset($params['<?php echo $primaryKey ?>']);

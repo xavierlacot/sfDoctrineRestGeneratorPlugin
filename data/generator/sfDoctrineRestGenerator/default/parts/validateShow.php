@@ -4,7 +4,7 @@
    *
    * @param   array   $params  An array of criterions used for the selection
    */
-  public function validateIndex($params)
+  public function validateShow($params)
   {
   	$validators = $this->getIndexValidators();
   	$this->validate($params, $validators);
