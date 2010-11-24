@@ -20,7 +20,7 @@
       foreach ($payload_array as $name => $value)
       {
       	$name = sfInflector::underscore($name);
-      	$this->_payload_array[$name] = trim(rtrim((string)$value));
+      	$this->_payload_array[$name] = trim((string)$value);
       }
     }
 
