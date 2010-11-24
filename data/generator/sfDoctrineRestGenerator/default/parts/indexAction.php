@@ -12,19 +12,7 @@
     $this->dispatcher->notify(new sfEvent($this, 'sfDoctrineRestGenerator.get.pre', array('params' => $params)));
 
     $request->setRequestFormat('html');
-    unset($params['sf_format']);
-    unset($params['module']);
-    unset($params['action']);
-
-    $additional_params = <?php var_export($this->configuration->getValue('get.additional_params', array())); ?>;
-
-    foreach ($params as $name => $value)
-    {
-      if (!$value || in_array($name, $additional_params))
-      {
-        unset($params[$name]);
-      }
-    }
+    $params = $this->cleanupParameters($params);
 
     try
     {
