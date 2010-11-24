@@ -50,12 +50,13 @@
     $this->forward404Unless(count($this->objects) === 1);
 
 <?php foreach ($this->configuration->getValue('get.object_additional_fields') as $field): ?>
-      $this->embedAdditional<?php echo $field ?>(0, $params);
+    $this->embedAdditional<?php echo $field ?>(0, $params);
 <?php endforeach; ?>
-
 <?php foreach ($this->configuration->getValue('get.global_additional_fields') as $field): ?>
     $this->embedGlobalAdditional<?php echo $field ?>($params);
 <?php endforeach; ?>
+
+    $this->setFieldVisibility();
 
     $serializer = $this->getSerializer();
     $this->getResponse()->setContentType($serializer->getContentType());

@@ -45,6 +45,8 @@ class <?php echo $this->getGeneratedModuleName() ?>Actions extends <?php echo $t
 
 <?php include dirname(__FILE__).'/../../parts/queryFetchOne.php' ?>
 
+<?php include dirname(__FILE__).'/../../parts/setFieldVisibility.php' ?>
+
 <?php include dirname(__FILE__).'/../../parts/showAction.php' ?>
 
 <?php include dirname(__FILE__).'/../../parts/updateAction.php' ?>
