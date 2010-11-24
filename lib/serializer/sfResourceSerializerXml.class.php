@@ -7,9 +7,10 @@ class sfResourceSerializerXml extends sfResourceSerializer
     return 'application/xml';
   }
 
-  public function serialize($array, $rootNodeName = 'data')
+  public function serialize($array, $rootNodeName = 'data', $collection = true)
   {
-    return $this->arrayToXml($array, $rootNodeName, 0);
+    $camelizedRootNodeName = $this->camelize($rootNodeName);
+    return $this->arrayToXml($array, $camelizedRootNodeName, 0, $collection);
   }
 
   public function unserialize($payload)
@@ -17,20 +18,21 @@ class sfResourceSerializerXml extends sfResourceSerializer
     return @simplexml_load_string($payload);
   }
 
-  protected function arrayToXml($array, $rootNodeName = 'data', $level = 0)
+  protected function arrayToXml($array, $rootNodeName = 'Data', $level = 0, $collection = true)
   {
     $xml = '';
 
     if (0 == $level)
     {
-      $xml .= '<?xml version="1.0" encoding="utf-8"?><'.$this->camelize($rootNodeName).'s>';
+      $plural = (true === $collection) ? 's' : '';
+      $xml .= '<?xml version="1.0" encoding="utf-8"?><'.$rootNodeName.$plural.'>';
     }
 
     foreach ($array as $key => $value)
     {
       if (is_numeric($key))
       {
-        $key = $this->camelize($rootNodeName);
+        $key = $rootNodeName;
       }
       else
       {
@@ -70,7 +72,7 @@ class sfResourceSerializerXml extends sfResourceSerializer
 
     if (0 == $level)
     {
-      $xml .= '</'.$this->camelize($rootNodeName).'s>';
+      $xml .= '</'.$rootNodeName.$plural.'>';
     }
 
     return $xml;

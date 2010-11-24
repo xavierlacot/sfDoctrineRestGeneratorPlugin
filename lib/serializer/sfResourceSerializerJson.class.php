@@ -7,7 +7,7 @@ class sfResourceSerializerJson extends sfResourceSerializer
     return 'application/json';
   }
 
-  public function serialize($array, $rootNodeName = 'data')
+  public function serialize($array, $rootNodeName = 'data', $collection = true)
   {
     return json_encode($array);
   }
