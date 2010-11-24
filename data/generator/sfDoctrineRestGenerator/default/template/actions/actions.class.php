@@ -16,6 +16,8 @@ class <?php echo $this->getGeneratedModuleName() ?>Actions extends <?php echo $t
 
 <?php include dirname(__FILE__).'/../../parts/cleanupParameters.php' ?>
 
+<?php include dirname(__FILE__).'/../../parts/configureFields.php' ?>
+
 <?php include dirname(__FILE__).'/../../parts/createAction.php' ?>
 
 <?php include dirname(__FILE__).'/../../parts/createObject.php' ?>
