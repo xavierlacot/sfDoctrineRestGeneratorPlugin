@@ -15,7 +15,7 @@
     }
     catch (Exception $e)
     {
-    	$this->getResponse()->setStatusCode(406);
+      $this->getResponse()->setStatusCode(406);
       $serializer = $this->getSerializer();
       $this->getResponse()->setContentType($serializer->getContentType());
       $error = $e->getMessage();
@@ -41,7 +41,7 @@
     }
 
     // retrieve the object
-    <?php $primaryKey = Doctrine_Core::getTable($this->getModelClass())->getIdentifier() ?>
+<?php $primaryKey = Doctrine_Core::getTable($this->getModelClass())->getIdentifier() ?>
     $primaryKey = $request->getParameter('<?php echo $primaryKey ?>');
     $this->object = Doctrine_Core::getTable($this->model)->findOneBy<?php echo sfInflector::camelize($primaryKey) ?>($primaryKey);
     $this->forward404Unless($this->object);
