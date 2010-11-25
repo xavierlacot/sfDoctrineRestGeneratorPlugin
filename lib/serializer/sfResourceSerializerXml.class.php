@@ -15,7 +15,27 @@ class sfResourceSerializerXml extends sfResourceSerializer
 
   public function unserialize($payload)
   {
-    return @simplexml_load_string($payload);
+    return $this->unserializeToArray(@simplexml_load_string($payload));
+  }
+
+  protected function unserializeToArray($data)
+  {
+    libxml_use_internal_errors(true);
+
+    if ($data instanceof SimpleXMLElement)
+    {
+      $data = (array) $data;
+    }
+
+    if (is_array($data))
+    {
+      foreach ($data as &$item)
+      {
+        $item = $this->unserializeToArray($item, true);
+      }
+    }
+
+    return $data;
   }
 
   protected function arrayToXml($array, $rootNodeName = 'Data', $level = 0, $collection = true)
