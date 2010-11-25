@@ -10,18 +10,17 @@
         $payload_array = $serializer->unserialize($payload);
       }
 
-    	if (!isset($payload_array) || !$payload_array)
-    	{
-    	  throw new sfException(sprintf('Could not parse payload, obviously not a valid %s data!', $format));
-    	}
-
-      $this->_payload_array = array();
-
-      foreach ($payload_array as $name => $value)
+      if (!isset($payload_array) || !$payload_array)
       {
-      	$name = sfInflector::underscore($name);
-      	$this->_payload_array[$name] = trim((string)$value);
+        throw new sfException(sprintf('Could not parse payload, obviously not a valid %s data!', $format));
       }
+
+      $filter_params = <?php var_export(array_merge(
+        $this->configuration->getValue('get.global_additional_fields', array()),
+        $this->configuration->getValue('get.object_additional_fields', array())
+      )) ?>;
+
+      $this->_payload_array = sfDoctrineRestGenerator::underscorePayload($payload_array, $filter_params);
     }
 
     return $this->_payload_array;

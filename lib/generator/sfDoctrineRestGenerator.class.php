@@ -37,6 +37,33 @@ class sfDoctrineRestGenerator extends sfGenerator
     return strtolower(preg_replace(array('/([A-Z]+)([A-Z][a-z])/', '/([a-z\d])([A-Z])/'), '\\1_\\2', $name));
   }
 
+  public static function underscorePayload($payload_array, $filter_params = array())
+  {
+    foreach ($payload_array as $name => $value)
+    {
+      if (!in_array($name, $filter_params))
+      {
+
+        if (!is_array($value))
+        {
+          $value = trim((string)$value);
+          $underscored_name = sfInflector::underscore($name);
+          $payload_array[$underscored_name] = $value;
+          unset($payload_array[$name]);
+        }
+        else
+        {
+          // in the case of relations, do not transform the name of the relation
+          $value = self::underscorePayload($value);
+          $payload_array[$name] = $value;
+        }
+      }
+      else unset($payload_array[$name]);
+    }
+
+    return $payload_array;
+  }
+
   /**
    * Generates classes and templates in cache.
    *
@@ -143,6 +170,16 @@ class sfDoctrineRestGenerator extends sfGenerator
   }
 
   /**
+   * Returns an array of relations.
+   *
+   * @return array An array of relations
+   */
+  public function getRelations()
+  {
+    return $this->table->getRelations();
+  }
+
+  /**
    * Returns an array of relations that represents a many to many relationship.
    *
    * @return array An array of relations
@@ -167,6 +204,27 @@ class sfDoctrineRestGenerator extends sfGenerator
     return $relations;
   }
 
+  public function isTableManyToManyRelation($table, $alias)
+  {
+    if ('sfDoctrineRestGenerator' == get_class($table))
+    {
+      $table = $table->table;
+    }
+
+    if ($relation = $table->getRelation($alias))
+    {
+      return Doctrine_Relation::MANY == $relation->getType()
+        &&
+        isset($relation['refTable'])
+        &&
+        (null === $this->getParentModel($table) || !Doctrine_Core::getTable($this->getParentModel($table))->hasRelation($relation->getAlias()));
+    }
+    else
+    {
+       throw new Exception(sprintf('The relation "%s" is not defined.', $alias));
+    }
+  }
+
   public function isManyToManyRelation($alias)
   {
     if ($relation = $this->table->getRelation($alias))
@@ -188,15 +246,29 @@ class sfDoctrineRestGenerator extends sfGenerator
    *
    * @return array $columns
    */
-  public function getColumns()
+  public function getColumns($object = null)
   {
-    $parentModel = $this->getParentModel();
-    $parentColumns = $parentModel ? array_keys(Doctrine_Core::getTable($parentModel)->getColumns()) : array();
-
-    $columns = array();
-    foreach (array_diff(array_keys($this->table->getColumns()), $parentColumns) as $name)
+    if (null === $object)
     {
-      $columns[] = new sfDoctrineColumn($name, $this->table);
+      $object = $this;
+    }
+
+    if ('sfDoctrineRestGenerator' == get_class($object))
+    {
+      $table = $object->table;
+    }
+    else
+    {
+      $table = $object;
+    }
+
+    $parentModel = $this->getParentModel($object);
+    $parentColumns = $parentModel ? array_keys(Doctrine_Core::getTable($parentModel)->getColumns()) : array();
+    $columns = array();
+
+    foreach (array_diff(array_keys($table->getColumns()), $parentColumns) as $name)
+    {
+      $columns[] = new sfDoctrineColumn($name, $table);
     }
 
     return $columns;
@@ -207,8 +279,23 @@ class sfDoctrineRestGenerator extends sfGenerator
    *
    * @return string|null
    */
-  public function getParentModel()
+  public function getParentModel($object = null)
   {
+    if (null === $object)
+    {
+      $object = $this;
+    }
+
+    if ('sfDoctrineRestGenerator' == get_class($object))
+    {
+      // find the first non-abstract parent
+      $model = $object->params['model_class'];
+    }
+    else
+    {
+      $model = $object->getTableName();
+    }
+
     $baseClasses = array(
       'Doctrine_Record',
       'sfDoctrineRecord',
@@ -220,8 +307,6 @@ class sfDoctrineRestGenerator extends sfGenerator
       $baseClasses[] = $builderOptions['baseClassName'];
     }
 
-    // find the first non-abstract parent
-    $model = $this->params['model_class'];
     while ($model = get_parent_class($model))
     {
       if (in_array($model, $baseClasses))
@@ -592,18 +677,18 @@ class sfDoctrineRestGenerator extends sfGenerator
         $validatorSubclass = 'Boolean';
         break;
       case 'string':
-    		if ($column->getDefinitionKey('email'))
-    		{
-    		  $validatorSubclass = 'Email';
-    		}
-    		else if ($column->getDefinitionKey('regexp'))
-    		{
-    		  $validatorSubclass = 'Regex';
-    		}
-    		else
-    		{
-    		  $validatorSubclass = 'String';
-    		}
+        if ($column->getDefinitionKey('email'))
+        {
+          $validatorSubclass = 'Email';
+        }
+        else if ($column->getDefinitionKey('regexp'))
+        {
+          $validatorSubclass = 'Regex';
+        }
+        else
+        {
+          $validatorSubclass = 'String';
+        }
         break;
       case 'clob':
       case 'blob':
@@ -646,13 +731,18 @@ class sfDoctrineRestGenerator extends sfGenerator
    * @param sfDoctrineColumn $column
    * @return string    The options to pass to the validator as a PHP string
    */
-  public function getCreateValidatorOptionsForColumn($column)
+  public function getCreateValidatorOptionsForColumn($column, $model = null)
   {
+    if (null === $model)
+    {
+      $model = '$this->model';
+    }
+
     $options = array();
 
     if ($column->isForeignKey())
     {
-      $options[] = sprintf('\'model\' => Doctrine_Core::getTable($this->model)->getRelation(\'%s\')->getAlias()', $column->getRelationKey('alias'));
+      $options[] = sprintf('\'model\' => Doctrine_Core::getTable('.$model.')->getRelation(\'%s\')->getAlias()', $column->getRelationKey('alias'));
     }
     else if ($column->isPrimaryKey())
     {
@@ -693,6 +783,56 @@ class sfDoctrineRestGenerator extends sfGenerator
     return count($options) ? sprintf('array(%s)', implode(', ', $options)) : '';
   }
 
+
+  /**
+   * Based on a table's model, generates a PHP string representing an indexed
+   * array of validators in a smiliar arrangement like the relationships
+   * hierarchy.
+   */
+  protected function getCreateValidatorsArray($table, $level = 0)
+  {
+    if ($level > 1)
+    {
+      // do not generate validators for more than two levels
+      return null;
+    }
+
+    if ('sfDoctrineRestGenerator' == get_class($table))
+    {
+      $table = $table->table;
+    }
+
+    $model_name = '\''.$table->getClassnameToReturn().'\'';
+    $spaces = str_repeat('  ', $level + 3);
+    $validators = "array(\n";
+
+    foreach ($this->getColumns($table) as $column)
+    {
+      if (!$column->isPrimaryKey())
+      {
+        $validators .= $spaces.'\''.$column->getFieldName().'\' => new '.$this->getCreateValidatorClassForColumn($column).'('.$this->getCreateValidatorOptionsForColumn($column, $model_name)."),\n";
+      }
+    }
+
+    foreach ($table->getRelations() as $alias => $relation)
+    {
+      if ($this->isTableManyToManyRelation($table, $alias))
+      {
+        // to do later
+      }
+      else
+      {
+        $sub_validators = $this->getCreateValidatorsArray($relation->getTable(), $level + 1);
+
+        if (null != $sub_validators)
+        {
+          $validators .= $spaces.'\''.$alias.'\' => '.$sub_validators.",\n";
+        }
+      }
+    }
+
+    return $validators.str_repeat('  ', $level + 2).')';
+  }
 
 
   /**
