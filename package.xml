@@ -24,11 +24,11 @@ for data exchange. Here are some key features :
   <email>xavier@lacot.org</email>
   <active>yes</active>
  </lead>
- <date>2010-08-13</date>
- <time>00:03:32</time>
+ <date>2010-11-25</date>
+ <time>23:54:06</time>
  <version>
-  <release>0.9.3</release>
-  <api>0.9.3</api>
+  <release>0.9.4</release>
+  <api>0.9.4</api>
  </version>
  <stability>
   <release>beta</release>
@@ -36,46 +36,69 @@ for data exchange. Here are some key features :
  </stability>
  <license uri="http://www.opensource.org/licenses/mit-license.html">MIT</license>
  <notes>
-* Added `hide` and `embedded_relations_hide` options (thanks to Pascal Borreli)
-* Made the fields filtering faster
+* Allow to create or update related objects in the very same request: payload parsing in a recursive way, recursive validation of the payload array, recursive generation of the validators array. Thanks to dfeyer for his contributions on this topic
+* Added a basic &quot;show&quot; action (thanks dfeyer)
+* Improved the performance of the XML serializer
+* Added the capacity to serialize single objects (thanks dfeyer)
+* Added cleanupParameters() method to avoid code duplication (thanks dfeyer)
+* Added setFieldVisibility() method, in order to share code between index and show actions (thanks dfeyer)
+* Added configureFields() method, in order to share code between index and show actions (thanks dfeyer)
+* Fixed executeUpdate() so that the content is not a parameter of the request, but the content of the PUT request (thanks dfeyer)
+* Fix the setFieldVisibility() method, so that object additional fields don&apos;t get stripped if they&apos;re not listed in the &apos;get.display&apos; option
+* Have the XML serializer return a PHP array (thanks dfeyer)
+* Added the `formats_strict` option
+* Improved the deserialization abstraction
+* Added a YAML serializer
+* Improved the documentation on these topics
  </notes>
  <contents>
   <dir baseinstalldir="." name="/">
-   <file baseinstalldir="." md5sum="f72ebe8f0d391716256e00bf9306abeb" name="data/generator/sfDoctrineRestGenerator/default/parts/configuration.php" role="data" />
-   <file baseinstalldir="." md5sum="12286407c2708190ce5891f274b8ed4d" name="data/generator/sfDoctrineRestGenerator/default/parts/createAction.php" role="data" />
+   <file baseinstalldir="." md5sum="ba909e12be8202f0db382320736abdaa" name="data/generator/sfDoctrineRestGenerator/default/parts/cleanupParameters.php" role="php" />
+   <file baseinstalldir="." md5sum="c2d104af6fef83b0d387abd25bd6501b" name="data/generator/sfDoctrineRestGenerator/default/parts/configuration.php" role="data" />
+   <file baseinstalldir="." md5sum="43492767990ca32544ab590fe53757cc" name="data/generator/sfDoctrineRestGenerator/default/parts/configureFields.php" role="php" />
+   <file baseinstalldir="." md5sum="d80a9293bbe3a24d0f54fb59c0df8251" name="data/generator/sfDoctrineRestGenerator/default/parts/createAction.php" role="data" />
    <file baseinstalldir="." md5sum="fc2f9a8e6dccedff99431815e16f4535" name="data/generator/sfDoctrineRestGenerator/default/parts/createObject.php" role="data" />
    <file baseinstalldir="." md5sum="e80ea704c1b5fed090b98e8adff45a6d" name="data/generator/sfDoctrineRestGenerator/default/parts/deleteAction.php" role="data" />
-   <file baseinstalldir="." md5sum="8e10d6281c78d41b25aed781b7b9a0f4" name="data/generator/sfDoctrineRestGenerator/default/parts/doSave.php" role="data" />
+   <file baseinstalldir="." md5sum="ea59702b9b82e7f9362535630f436f20" name="data/generator/sfDoctrineRestGenerator/default/parts/doSave.php" role="data" />
    <file baseinstalldir="." md5sum="212381b5b690aa04888a3b0592dc98fe" name="data/generator/sfDoctrineRestGenerator/default/parts/fieldsConfiguration.php" role="data" />
-   <file baseinstalldir="." md5sum="18538d45efe61438cb09b5b875b9ef0f" name="data/generator/sfDoctrineRestGenerator/default/parts/getCreateValidators.php" role="data" />
+   <file baseinstalldir="." md5sum="bad8e9b375e90c1afe4a4250907d5031" name="data/generator/sfDoctrineRestGenerator/default/parts/getCreateValidators.php" role="data" />
+   <file baseinstalldir="." md5sum="17fe499fefe39d4bdb6afd62693031f7" name="data/generator/sfDoctrineRestGenerator/default/parts/getFormat.php" role="php" />
    <file baseinstalldir="." md5sum="e238fd6343fd47ef621da9e044304b23" name="data/generator/sfDoctrineRestGenerator/default/parts/getIndexValidators.php" role="data" />
+   <file baseinstalldir="." md5sum="eb1c046cacff18aa394b51952290e0a7" name="data/generator/sfDoctrineRestGenerator/default/parts/getSerializer.php" role="php" />
    <file baseinstalldir="." md5sum="5f15869bb09c4f77cdb1bde10cab3f07" name="data/generator/sfDoctrineRestGenerator/default/parts/getUpdateValidators.php" role="php" />
-   <file baseinstalldir="." md5sum="b17e0a85e3d1e3d28961e611c44bc34f" name="data/generator/sfDoctrineRestGenerator/default/parts/indexAction.php" role="data" />
-   <file baseinstalldir="." md5sum="68b6c6bf924ee6e437067e41c8b0db3d" name="data/generator/sfDoctrineRestGenerator/default/parts/paginationConfiguration.php" role="data" />
-   <file baseinstalldir="." md5sum="dbb027d32b3271ef43dcb21bcef84fd5" name="data/generator/sfDoctrineRestGenerator/default/parts/parsePayload.php" role="data" />
-   <file baseinstalldir="." md5sum="959326712c513c268f45f846f791c41d" name="data/generator/sfDoctrineRestGenerator/default/parts/query.php" role="data" />
-   <file baseinstalldir="." md5sum="b65e16ffe94186c5d62640f526283fdb" name="data/generator/sfDoctrineRestGenerator/default/parts/queryAdditionnal.php" role="data" />
-   <file baseinstalldir="." md5sum="8831eef0b65854b08de5a84c6b7887d2" name="data/generator/sfDoctrineRestGenerator/default/parts/sortConfiguration.php" role="data" />
-   <file baseinstalldir="." md5sum="e01abb2ca9197d3b4b0746d9571786bc" name="data/generator/sfDoctrineRestGenerator/default/parts/updateAction.php" role="php" />
+   <file baseinstalldir="." md5sum="189bc02aee42b8f9a6484f802a51fef9" name="data/generator/sfDoctrineRestGenerator/default/parts/indexAction.php" role="data" />
+   <file baseinstalldir="." md5sum="11490c2219a53dc7f025e3c402788a67" name="data/generator/sfDoctrineRestGenerator/default/parts/paginationConfiguration.php" role="data" />
+   <file baseinstalldir="." md5sum="77e4c3fc90c0651022ed9c7c4ae5e439" name="data/generator/sfDoctrineRestGenerator/default/parts/parsePayload.php" role="data" />
+   <file baseinstalldir="." md5sum="b049ac743f65c357bfd2a6e9b8b7e492" name="data/generator/sfDoctrineRestGenerator/default/parts/query.php" role="data" />
+   <file baseinstalldir="." md5sum="9d26f6aeb2ad96e60b1b06fc44d0e1ad" name="data/generator/sfDoctrineRestGenerator/default/parts/queryAdditionnal.php" role="data" />
+   <file baseinstalldir="." md5sum="12f14e27cc4307af9dd924cc81b85b8a" name="data/generator/sfDoctrineRestGenerator/default/parts/queryExecute.php" role="php" />
+   <file baseinstalldir="." md5sum="43016d7b2849393aa009ca0d3e51048f" name="data/generator/sfDoctrineRestGenerator/default/parts/queryFetchOne.php" role="php" />
+   <file baseinstalldir="." md5sum="89845dd2d47128cb962441d42fbc46d1" name="data/generator/sfDoctrineRestGenerator/default/parts/setFieldVisibility.php" role="php" />
+   <file baseinstalldir="." md5sum="86ba266a0997d139bd10b42f1a86b699" name="data/generator/sfDoctrineRestGenerator/default/parts/showAction.php" role="php" />
+   <file baseinstalldir="." md5sum="026c37b5f884a2dae6723a76d8956dc7" name="data/generator/sfDoctrineRestGenerator/default/parts/sortConfiguration.php" role="data" />
+   <file baseinstalldir="." md5sum="c25ea679f2bb36fdc44a4020905406cc" name="data/generator/sfDoctrineRestGenerator/default/parts/updateAction.php" role="php" />
    <file baseinstalldir="." md5sum="89f8383000964ee620afa2e8226ac900" name="data/generator/sfDoctrineRestGenerator/default/parts/updateObjectFromRequest.php" role="data" />
-   <file baseinstalldir="." md5sum="c14129f5f3006d8b1f72a03ad2fe7f9e" name="data/generator/sfDoctrineRestGenerator/default/parts/validate.php" role="php" />
+   <file baseinstalldir="." md5sum="40a76721e515881b8a5e286cc79cd868" name="data/generator/sfDoctrineRestGenerator/default/parts/validate.php" role="php" />
    <file baseinstalldir="." md5sum="63c0c245f2ff815b317cf6d39d6fac6e" name="data/generator/sfDoctrineRestGenerator/default/parts/validateCreate.php" role="data" />
-   <file baseinstalldir="." md5sum="09c9158f962ca6af45b1c5fdd0929f4c" name="data/generator/sfDoctrineRestGenerator/default/parts/validateIndex.php" role="data" />
+   <file baseinstalldir="." md5sum="68ca6286ea99b6fb25bec15e021d15f4" name="data/generator/sfDoctrineRestGenerator/default/parts/validateIndex.php" role="data" />
+   <file baseinstalldir="." md5sum="3516bd6ae7cd2b5f0a4da286464b33bc" name="data/generator/sfDoctrineRestGenerator/default/parts/validateShow.php" role="php" />
    <file baseinstalldir="." md5sum="dc1e971d03413449994512a52a7e8221" name="data/generator/sfDoctrineRestGenerator/default/parts/validateUpdate.php" role="php" />
    <file baseinstalldir="." md5sum="fa0dc415bd38a12d41b4b29bd672b9ba" name="data/generator/sfDoctrineRestGenerator/default/skeleton/actions/actions.class.php" role="data" />
-   <file baseinstalldir="." md5sum="ab54a4734964fbd38bca5aa6460e3285" name="data/generator/sfDoctrineRestGenerator/default/skeleton/config/generator.yml" role="data" />
+   <file baseinstalldir="." md5sum="4776b9d7bf02e96e7ef8e4f0140654f7" name="data/generator/sfDoctrineRestGenerator/default/skeleton/config/generator.yml" role="data" />
    <file baseinstalldir="." md5sum="bf5f38d67568d73b8de7db565df839fd" name="data/generator/sfDoctrineRestGenerator/default/skeleton/config/view.yml" role="data" />
    <file baseinstalldir="." md5sum="5557288884e6a517bfb9b3176aa08567" name="data/generator/sfDoctrineRestGenerator/default/skeleton/lib/configuration.php" role="data" />
-   <file baseinstalldir="." md5sum="571067e0d001cd630d9db7e6ae000fc2" name="data/generator/sfDoctrineRestGenerator/default/template/actions/actions.class.php" role="data" />
+   <file baseinstalldir="." md5sum="8cf13e26b2caa7b2f87f8e30186d5279" name="data/generator/sfDoctrineRestGenerator/default/template/actions/actions.class.php" role="data" />
    <file baseinstalldir="." md5sum="9ea0d70a8d800ef4c3ebaf8027dcfdc3" name="data/generator/sfDoctrineRestGenerator/default/template/templates/indexSuccess.php" role="data" />
-   <file baseinstalldir="." md5sum="70104ec7ef554b2e465b0161e3d6423e" name="lib/generator/sfDoctrineRestGenerator.class.php" role="data" />
-   <file baseinstalldir="." md5sum="0bcc4d9f5ece25d0924d6483ec83112a" name="lib/generator/sfDoctrineRestGeneratorConfiguration.class.php" role="data" />
-   <file baseinstalldir="." md5sum="d838617c91f6707a74a161f0cc5fc4fe" name="lib/serializer/sfResourceSerializer.class.php" role="data" />
-   <file baseinstalldir="." md5sum="40a5a9dc54af40db49806e79d7314571" name="lib/serializer/sfResourceSerializerJson.class.php" role="data" />
-   <file baseinstalldir="." md5sum="e793c3af427c1aa22b7ee33459fc9284" name="lib/serializer/sfResourceSerializerXml.class.php" role="data" />
-   <file baseinstalldir="." md5sum="cab84c1da056bd2b0713271f69afd9de" name="lib/task/sfDoctrineRestGenerateModuleTask.class.php" role="data" />
+   <file baseinstalldir="." md5sum="fa551578914e904d0dac3b1680213078" name="lib/generator/sfDoctrineRestGenerator.class.php" role="data" />
+   <file baseinstalldir="." md5sum="ceeca12ab6984f6ae604484893f2bb4c" name="lib/generator/sfDoctrineRestGeneratorConfiguration.class.php" role="data" />
+   <file baseinstalldir="." md5sum="df89806de8f8ff13e479764a4727f7c6" name="lib/serializer/sfResourceSerializer.class.php" role="data" />
+   <file baseinstalldir="." md5sum="3cf9dc4e455281b74fa3e5928f9aae61" name="lib/serializer/sfResourceSerializerJson.class.php" role="data" />
+   <file baseinstalldir="." md5sum="814ff9e2896f350a932e3319536998d7" name="lib/serializer/sfResourceSerializerXml.class.php" role="data" />
+   <file baseinstalldir="." md5sum="77b2b72d8e6a975fc9d172ff6e1d65a9" name="lib/serializer/sfResourceSerializerYaml.class.php" role="php" />
+   <file baseinstalldir="." md5sum="eb935c09de706a77774e4dd6b83b95f7" name="lib/task/sfDoctrineRestGenerateModuleTask.class.php" role="data" />
    <file baseinstalldir="." md5sum="42e5bbfed0992e1aa954a1b91282d5d7" name="LICENSE" role="data" />
-   <file baseinstalldir="." md5sum="5c51849f8551c90bb2d25029bd6c176a" name="README" role="data" />
+   <file baseinstalldir="." md5sum="b9e44c76aeef9d1b01e92e86f428af42" name="README" role="data" />
+   <file baseinstalldir="." md5sum="b9e44c76aeef9d1b01e92e86f428af42" name="README.markdown" role="data" />
   </dir>
  </contents>
  <dependencies>
@@ -182,6 +205,34 @@ for data exchange. Here are some key features :
    <notes>
 * Added `hide` and `embedded_relations_hide` options (thanks to Pascal Borreli)
 * Made the fields filtering faster
+   </notes>
+  </release>
+  <release>
+   <version>
+    <release>0.9.4</release>
+    <api>0.9.4</api>
+   </version>
+   <stability>
+    <release>beta</release>
+    <api>beta</api>
+   </stability>
+   <date>2010-11-25</date>
+   <license uri="http://www.opensource.org/licenses/mit-license.html">MIT</license>
+   <notes>
+* Allow to create or update related objects in the very same request: payload parsing in a recursive way, recursive validation of the payload array, recursive generation of the validators array. Thanks to dfeyer for his contributions on this topic
+* Added a basic &quot;show&quot; action (thanks dfeyer)
+* Improved the performance of the XML serializer
+* Added the capacity to serialize single objects (thanks dfeyer)
+* Added cleanupParameters() method to avoid code duplication (thanks dfeyer)
+* Added setFieldVisibility() method, in order to share code between index and show actions (thanks dfeyer)
+* Added configureFields() method, in order to share code between index and show actions (thanks dfeyer)
+* Fixed executeUpdate() so that the content is not a parameter of the request, but the content of the PUT request (thanks dfeyer)
+* Fix the setFieldVisibility() method, so that object additional fields don&apos;t get stripped if they&apos;re not listed in the &apos;get.display&apos; option
+* Have the XML serializer return a PHP array (thanks dfeyer)
+* Added the `formats_strict` option
+* Improved the deserialization abstraction
+* Added a YAML serializer
+* Improved the documentation on these topics
    </notes>
   </release>
  </changelog>
