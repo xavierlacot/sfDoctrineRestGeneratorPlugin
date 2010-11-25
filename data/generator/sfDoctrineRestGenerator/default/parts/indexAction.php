@@ -21,7 +21,7 @@
     }
     catch (Exception $e)
     {
-    	$this->getResponse()->setStatusCode(406);
+      $this->getResponse()->setStatusCode(406);
       $serializer = $this->getSerializer();
       $this->getResponse()->setContentType($serializer->getContentType());
       $error = $e->getMessage();
@@ -76,6 +76,7 @@
     $this->embedGlobalAdditional<?php echo $field ?>($params);
 <?php endforeach; ?>
 
+    // configure the fields of the returned objects and eventually hide some
     $this->setFieldVisibility();
     $this->configureFields();
 
