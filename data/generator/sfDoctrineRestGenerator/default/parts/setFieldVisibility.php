@@ -9,16 +9,21 @@
 <?php
 $display = $this->configuration->getValue('get.display');
 $hide = $this->configuration->getValue('get.hide');
+$embed_relations = $this->configuration->getValue('get.embed_relations');
+$object_additional_fields = $this->configuration->getValue('get.object_additional_fields');
 ?><?php if (count($display) > 0): ?>
 <?php if (count($hide) > 0): ?>
-    $accepted_keys = <?php echo var_export(array_flip(array_merge(array_diff($display, $hide), $embed_relations)), true); ?>;
+    $accepted_keys = <?php echo var_export(array_flip(array_merge(array_diff($display, $hide), $embed_relations, $object_additional_fields)), true); ?>;
 <?php else: ?>
-    $accepted_keys = <?php echo var_export(array_flip(array_merge($display, $embed_relations)), true); ?>;
+    $accepted_keys = <?php echo var_export(array_flip(array_merge($display, $embed_relations, $object_additional_fields)), true); ?>;
 <?php endif; ?>
 
     foreach ($this->objects as $i => $object)
     {
-      $this->objects[$i] = array_intersect_key($object, $accepted_keys);
+      if (is_int($i))
+      {
+        $this->objects[$i] = array_intersect_key($object, $accepted_keys);
+      }
     }
 <?php elseif (count($hide) > 0): ?>
 
@@ -26,7 +31,10 @@ $hide = $this->configuration->getValue('get.hide');
 
     foreach ($this->objects as $i => $object)
     {
-      $this->objects[$i] = array_diff_key($object, $hidden_keys);
+      if (is_int($i))
+      {
+        $this->objects[$i] = array_diff_key($object, $hidden_keys);
+      }
     }
 <?php endif; ?>
 <?php $embedded_relations_hide = $this->configuration->getValue('get.embedded_relations_hide'); ?>
@@ -36,15 +44,18 @@ $hide = $this->configuration->getValue('get.hide');
 
     foreach ($this->objects as $i => $object)
     {
-      foreach ($embedded_relations_hide as $relation_name => $hidden_fields)
+      if (is_int($i))
       {
-        if (isset($object[$relation_name]))
+        foreach ($embedded_relations_hide as $relation_name => $hidden_fields)
         {
-          $object[$relation_name] = array_diff_key($object[$relation_name], $hidden_fields);
+          if (isset($object[$relation_name]))
+          {
+            $object[$relation_name] = array_diff_key($object[$relation_name], $hidden_fields);
+          }
         }
-      }
 
-      $this->objects[$i] = $object;
+        $this->objects[$i] = $object;
+      }
     }
 <?php endif; ?>
   }
