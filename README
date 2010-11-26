@@ -88,7 +88,7 @@ This will generate:
            class:   sfObjectRouteCollection
            options:
              model:   Post
-             actions: [ create, delete, list, update ]
+             actions: [ create, delete, list, show, update ]
              module:  post
              column:  id
              format:  xml
@@ -133,9 +133,10 @@ webservice is supposed to do:
 
 ### Allowed operations
 
-The REST web service supports four different operations:
+The REST web service supports five different operations:
 
  * getting a list of items ("list"): http://api.example.com/post.json (`GET` method),
+ * getting a single item ("show"): http://api.example.com/post/1.json (`GET` method)
  * creating a new item ("create"): http://api.example.com/post.json (`POST` method),
  * updating an existing item ("update"): http://api.example.com/post/123.json (`PUT` method, the value "123" must be replaced with the primary key of the object to update),
  * deleting an existing item ("delete"): http://api.example.com/post/123.json (`DELETE` method, the value "123" must be replaced with the primary key of the object to delete),
@@ -608,6 +609,9 @@ licensed under the MIT license.
 
 
 ## Changelog
+
+### trunk
+ * Enabled the `show` route by default
 
 ### version 0.9.4 - 2010-11-25
 

@@ -58,7 +58,7 @@ EOF;
   class:   sfObjectRouteCollection
   options:
     model:   %s
-    actions: [ create, delete, list, update ]
+    actions: [ create, delete, list, show, update ]
     module:  %s
     column:  %s
     format:  xml
