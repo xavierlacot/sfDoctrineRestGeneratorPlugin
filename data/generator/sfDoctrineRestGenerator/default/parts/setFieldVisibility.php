@@ -59,23 +59,23 @@ $relation = Doctrine::getTable($this->getModelClass())->getRelation($relation_na
       {
         foreach ($embedded_relations_hide as $relation_name => $hidden_fields)
         {
-          if (false === $relation_types[$relation_name])
+          if (isset($object[$relation_name]))
           {
-            if (isset($object[$relation_name]))
+            if (false === $relation_types[$relation_name])
             {
-              $object[$relation_name] = array_diff_key($object[$relation_name], $hidden_fields);
+                $object[$relation_name] = array_diff_key($object[$relation_name], $hidden_fields);
             }
-          }
-          else
-          {
-            $related_objects = $object[$relation_name];
-
-            foreach ($related_objects as $j => $related_object)
+            else
             {
-              $related_objects[$j] = array_diff_key($related_object, $hidden_fields);
-            }
+              $related_objects = $object[$relation_name];
 
-            $object[$relation_name] = $related_objects;
+              foreach ($related_objects as $j => $related_object)
+              {
+                $related_objects[$j] = array_diff_key($related_object, $hidden_fields);
+              }
+
+              $object[$relation_name] = $related_objects;
+            }
           }
         }
 
