@@ -25,7 +25,7 @@ for data exchange. Here are some key features :
 
   * Install the plugin:
 
-         ./symfony plugin:install http://plugins.symfony-project.com/sfDoctrineRestGeneratorPlugin
+         ./symfony plugin:install --stability=beta sfDoctrineRestGeneratorPlugin
 
 
   * clear the cache:
