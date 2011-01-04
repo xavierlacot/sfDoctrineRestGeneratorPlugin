@@ -15,7 +15,14 @@ class sfResourceSerializerXml extends sfResourceSerializer
 
   public function unserialize($payload)
   {
-    return $this->unserializeToArray(@simplexml_load_string($payload));
+    $return = $this->unserializeToArray(@simplexml_load_string($payload));
+
+    if (is_array($return))
+    {
+      $return = array_shift($return);
+    }
+
+    return $return;
   }
 
   protected function unserializeToArray($data)
@@ -29,9 +36,10 @@ class sfResourceSerializerXml extends sfResourceSerializer
 
     if (is_array($data))
     {
-      foreach ($data as &$item)
+      foreach ($data as $name => $item)
       {
-        $item = $this->unserializeToArray($item, true);
+        unset($data[$name]);
+        $data[sfInflector::underscore($name)] = $this->unserializeToArray($item, true);
       }
     }
 

@@ -14,6 +14,13 @@ class sfResourceSerializerYaml extends sfResourceSerializer
 
   public function unserialize($payload)
   {
-    return sfYaml::parse($array);
+    $return = sfYaml::load($payload);
+
+    if (is_array($return))
+    {
+      $return = array_shift($return);
+    }
+
+    return $return;
   }
 }
