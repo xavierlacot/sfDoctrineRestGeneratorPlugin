@@ -15,11 +15,20 @@ class sfResourceSerializerXml extends sfResourceSerializer
 
   public function unserialize($payload)
   {
-    $return = $this->unserializeToArray(@simplexml_load_string($payload));
+    $return = $this->unserializeToArray(@simplexml_load_string(
+      $payload,
+      'SimpleXMLElement',
+      LIBXML_NOERROR || LIBXML_NOWARNING || LIBXML_NONET
+    ));
 
-    if (is_array($return))
+    if (is_array($return) && count($return) == 1)
     {
-      $return = array_shift($return);
+      $collection_return = array_shift($return);
+
+      if (is_array($collection_return))
+      {
+        $return = $collection_return;
+      }
     }
 
     return $return;
@@ -38,8 +47,20 @@ class sfResourceSerializerXml extends sfResourceSerializer
     {
       foreach ($data as $name => $item)
       {
-        unset($data[$name]);
-        $data[sfInflector::underscore($name)] = $this->unserializeToArray($item, true);
+        if (!is_array($item) && (!is_object($item)))
+        {
+          $item = trim((string)$item);
+          unset($data[$name]);
+
+          if ('' != $item)
+          {
+            $data[sfInflector::underscore($name)] = $this->unserializeToArray($item, true);
+          }
+        }
+        else
+        {
+          $data[$name] = $this->unserializeToArray($item, true);
+        }
       }
     }
 

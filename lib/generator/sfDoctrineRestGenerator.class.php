@@ -43,7 +43,6 @@ class sfDoctrineRestGenerator extends sfGenerator
     {
       if (!in_array($name, $filter_params))
       {
-
         if (!is_array($value))
         {
           $value = trim((string)$value);
