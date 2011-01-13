@@ -14,7 +14,7 @@
 
     foreach ($params as $name => $value)
     {
-      if (null === $value || in_array($name, $additional_params))
+      if ((null === $value) || ('' === $value) || in_array($name, $additional_params))
       {
         unset($params[$name]);
       }
