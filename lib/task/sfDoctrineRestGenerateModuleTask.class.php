@@ -61,8 +61,8 @@ EOF;
     actions: [ create, delete, list, show, update ]
     module:  %s
     column:  %s
-    format:  xml
-
+    default_params:
+      sf_format:  json
 
 EOF
       , $module, $model, $module, $primaryKey).$content;
