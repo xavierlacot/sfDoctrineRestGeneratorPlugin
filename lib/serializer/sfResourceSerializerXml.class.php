@@ -47,7 +47,7 @@ class sfResourceSerializerXml extends sfResourceSerializer
     {
       foreach ($data as $name => $item)
       {
-        if (!is_array($item) && (!is_object($item)))
+        if ((!is_array($item) && (!is_object($item))) || ($item instanceof SimpleXMLElement && $item->count() < 1))
         {
           $item = trim((string)$item);
           unset($data[$name]);
