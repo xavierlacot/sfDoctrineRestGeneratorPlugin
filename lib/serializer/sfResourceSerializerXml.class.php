@@ -21,9 +21,12 @@ class sfResourceSerializerXml extends sfResourceSerializer
       LIBXML_NOERROR || LIBXML_NOWARNING || LIBXML_NONET
     ));
 
+    // Shift any root node and return only the nested array
     if (is_array($return) && count($return) == 1)
     {
-      $collection_return = array_shift($return);
+      // Don't want to break up the $return array
+      $return_shifted = $return;
+      $collection_return = array_shift($return_shifted);
 
       if (is_array($collection_return))
       {
