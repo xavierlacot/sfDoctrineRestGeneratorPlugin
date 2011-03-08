@@ -50,7 +50,13 @@ class sfResourceSerializerXml extends sfResourceSerializer
     {
       foreach ($data as $name => $item)
       {
-        if ((!is_array($item) && (!is_object($item))) || ($item instanceof SimpleXMLElement && count((array) $item) < 1))
+        // If the node is neither Array, nor any collection of data. Test also for empty or space only SimpleXMLElement
+        if (
+                (!is_array($item) && (!is_object($item))) ||
+                ($item instanceof SimpleXMLElement &&
+                        (count((array) $item) < 1 || (trim((string)$item) === '') )
+                )
+           )
         {
           $item = trim((string)$item);
           unset($data[$name]);
