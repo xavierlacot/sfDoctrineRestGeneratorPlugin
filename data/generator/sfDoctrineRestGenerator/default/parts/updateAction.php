@@ -7,6 +7,13 @@
   {
     $this->forward404Unless($request->isMethod(sfRequest::PUT));
     $content = $request->getContent();
+
+    // Restores backward compatibility. Content can be the HTTP request full body, or a form encoded "content" var.
+    if (strpos($content, 'content=') === 0)
+    {
+      $content = $request->getParameter('content');
+    }
+
     $request->setRequestFormat('html');
 
     try
