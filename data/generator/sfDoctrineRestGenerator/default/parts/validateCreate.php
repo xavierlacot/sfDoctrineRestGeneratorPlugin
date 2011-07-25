@@ -5,7 +5,11 @@
    */
   public function validateCreate($payload)
   {
-  	$validators = $this->getCreateValidators();
-    $params = $this->parsePayload($payload);
-  	$this->validate($params, $validators);
+     $params = $this->parsePayload($payload);
+
+     $validators = $this->getCreateValidators();
+     $this->validate($params, $validators);
+
+     $postvalidators = $this->getCreatePostValidators();
+     $this->postValidate($params, $postvalidators);
   }

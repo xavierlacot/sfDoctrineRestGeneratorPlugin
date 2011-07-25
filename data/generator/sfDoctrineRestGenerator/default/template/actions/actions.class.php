@@ -28,13 +28,19 @@ class <?php echo $this->getGeneratedModuleName() ?>Actions extends <?php echo $t
 
 <?php include dirname(__FILE__).'/../../parts/getCreateValidators.php' ?>
 
+<?php include dirname(__FILE__).'/../../parts/getCreatePostValidators.php' ?>
+
 <?php include dirname(__FILE__).'/../../parts/getFormat.php' ?>
 
 <?php include dirname(__FILE__).'/../../parts/getIndexValidators.php' ?>
 
+<?php include dirname(__FILE__).'/../../parts/getIndexPostValidators.php' ?>
+
 <?php include dirname(__FILE__).'/../../parts/getSerializer.php' ?>
 
 <?php include dirname(__FILE__).'/../../parts/getUpdateValidators.php' ?>
+
+<?php include dirname(__FILE__).'/../../parts/getUpdatePostValidators.php' ?>
 
 <?php include dirname(__FILE__).'/../../parts/indexAction.php' ?>
 
@@ -56,6 +62,8 @@ class <?php echo $this->getGeneratedModuleName() ?>Actions extends <?php echo $t
 <?php include dirname(__FILE__).'/../../parts/updateObjectFromRequest.php' ?>
 
 <?php include dirname(__FILE__).'/../../parts/validate.php' ?>
+
+<?php include dirname(__FILE__).'/../../parts/postValidate.php' ?>
 
 <?php include dirname(__FILE__).'/../../parts/validateCreate.php' ?>
 

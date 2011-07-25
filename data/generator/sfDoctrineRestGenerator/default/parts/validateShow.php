@@ -8,4 +8,7 @@
   {
   	$validators = $this->getIndexValidators();
   	$this->validate($params, $validators);
+
+  	$postvalidators = $this->getIndexPostValidators();
+  	$this->postValidate($params, $postvalidators);
   }
