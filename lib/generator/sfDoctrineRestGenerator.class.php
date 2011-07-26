@@ -47,8 +47,8 @@ class sfDoctrineRestGenerator extends sfGenerator
         {
           $value = trim((string)$value);
           $underscored_name = sfInflector::underscore($name);
-          $payload_array[$underscored_name] = $value;
           unset($payload_array[$name]);
+          $payload_array[$underscored_name] = $value;
         }
         else
         {
