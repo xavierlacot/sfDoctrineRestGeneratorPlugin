@@ -4,5 +4,5 @@
    */
   public function getCreatePostValidators()
   {
-     return array();
+    return array();
   }

@@ -4,5 +4,5 @@
    */
   public function getIndexPostValidators()
   {
-     return array();
+    return array();
   }

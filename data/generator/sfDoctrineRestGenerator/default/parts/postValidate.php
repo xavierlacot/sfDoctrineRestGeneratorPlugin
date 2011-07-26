@@ -11,15 +11,15 @@
     {
       if (isset($validators[$name]))
       {
-	 if (is_array($validators[$name]))
-	 {
-	    // validator for a related object
-	    $this->validate($value, $validators[$name], $prefix.$name.'.');
-	 }
-	 else
-	 {
-	    $validators[$name]->clean($value);
-	 }
+        if (is_array($validators[$name]))
+        {
+          // validator for a related object
+          $this->validate($value, $validators[$name], $prefix.$name.'.');
+        }
+        else
+        {
+          $validators[$name]->clean($value);
+        }
       }
     }
   }

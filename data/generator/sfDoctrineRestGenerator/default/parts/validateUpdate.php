@@ -5,11 +5,11 @@
    */
   public function validateUpdate($payload)
   {
-     $params = $this->parsePayload($payload);
+    $params = $this->parsePayload($payload);
 
-     $validators = $this->getUpdateValidators();
-     $this->validate($params, $validators);
+    $validators = $this->getUpdateValidators();
+    $this->validate($params, $validators);
 
-     $postvalidators = $this->getUpdatePostValidators();
-     $this->postValidate($params, $postvalidators);
+    $postvalidators = $this->getUpdatePostValidators();
+    $this->postValidate($params, $postvalidators);
   }
