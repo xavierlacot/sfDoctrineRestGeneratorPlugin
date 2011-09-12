@@ -13,6 +13,10 @@
     {
       $content = $request->getParameter('content');
     }
+    if ($content === false)
+    {
+      $content = $request->getPostParameter('content'); // Last chance to get the content!
+    }
 
     $request->setRequestFormat('html');
 
