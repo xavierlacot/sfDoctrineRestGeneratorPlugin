@@ -44,6 +44,7 @@ EOF;
     // create a route
     $model = $arguments['model'];
     $module = $arguments['module'];
+    $app = $arguments['application'];
 
     $routing = sfConfig::get('sf_app_config_dir').'/routing.yml';
     $content = file_get_contents($routing);
@@ -71,10 +72,10 @@ EOF
       file_put_contents($routing, $content);
     }
 
-    return $this->generate($module, $model);
+    return $this->generate($app, $module, $model);
   }
 
-  protected function generate($module, $model)
+  protected function generate($app, $module, $model)
   {
     $moduleDir = sfConfig::get('sf_app_module_dir').'/'.$module;
 
@@ -110,7 +111,7 @@ EOF
 
     $this->constants = array(
       'PROJECT_NAME'   => isset($properties['symfony']['name']) ? $properties['symfony']['name'] : 'symfony',
-      'APP_NAME'       => $arguments['application'],
+      'APP_NAME'       => $app,
       'MODULE_NAME'    => $module,
       'UC_MODULE_NAME' => ucfirst($module),
       'MODEL_CLASS'    => $model,
@@ -126,6 +127,12 @@ EOF
     ,
       $model
     );
+
     $this->getFilesystem()->replaceTokens($finder->in($moduleDir), '##', '##', $this->constants);
+
+    // Move the fonctionnal test in the sf_test_dir directory
+    $this->getFilesystem()->copy($moduleDir.'/test/actionsTest.php', sfConfig::get('sf_test_dir').'/functional/'.$this->constants['APP_NAME'].'/'.$this->constants['MODULE_NAME'].'ActionsTest.php');
+    $this->getFilesystem()->remove($moduleDir.'/test/actionsTest.php');
+    $this->getFilesystem()->remove($moduleDir.'/test');
   }
 }
