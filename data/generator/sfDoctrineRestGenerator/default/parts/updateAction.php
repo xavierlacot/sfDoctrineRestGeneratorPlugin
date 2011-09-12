@@ -9,7 +9,7 @@
     $content = $request->getContent();
 
     // Restores backward compatibility. Content can be the HTTP request full body, or a form encoded "content" var.
-    if (strpos($content, 'content=') === 0)
+    if (strpos($content, 'content=') === 0 || $request->hasParameter('content'))
     {
       $content = $request->getParameter('content');
     }
