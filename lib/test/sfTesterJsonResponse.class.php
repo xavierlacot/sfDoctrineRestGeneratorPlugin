@@ -20,14 +20,13 @@ class sfTesterJsonResponse extends sfTester
 
   /**
    * Try to decode the response body from json format
-   * 
+   *
    * @return boolean
    */
   public function isJson()
   {
-    $is_json = (bool) json_decode($this->browser->getResponse()->getContent());
-
-    $is_json ? $this->tester->pass('content is valid json') : $this->tester->fail('content is not valid json');
+    $is_json = json_decode($this->browser->getResponse()->getContent());
+    $is_json !== false ? $this->tester->pass('content is valid json') : $this->tester->fail('content is not valid json');
 
     return $this->getObjectToReturn();
   }
