@@ -108,3 +108,7 @@ if ($location)
     end()
   ;
 }
+else
+{
+  $test_browser->test()->fail("The last response doesn't have any Location header!");
+}
