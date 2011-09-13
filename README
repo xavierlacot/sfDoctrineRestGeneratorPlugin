@@ -17,6 +17,7 @@ for data exchange. Here are some key features :
   * hookable through events and filters
   * abstract and replaceable objects serialization
   * full HTTP support (GET, POST, PUT, DELETE)
+  * functional test for each module generated
 
 
 ## How to install
