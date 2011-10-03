@@ -15,7 +15,7 @@ class sfResourceSerializerXml extends sfResourceSerializer
 
   /**
    * Transform the payload into array assuming the payload is XML formatted.
-   * 
+   *
    * @param string $payload
    * @return array
    * @throw Exception
@@ -42,7 +42,7 @@ class sfResourceSerializerXml extends sfResourceSerializer
     {
       $errors = libxml_get_errors();
       $exception_message = '';
-      
+
       foreach ($errors as $error)
       {
         $exception_message .= $this->formatXmlError($error);
@@ -51,7 +51,7 @@ class sfResourceSerializerXml extends sfResourceSerializer
       libxml_clear_errors();
       throw new sfException("XML parsing error(s): \n".$exception_message);
     }
-    
+
     $return = $this->unserializeToArray($xml);
 
     // Shift any root node and return only the nested array
@@ -79,7 +79,7 @@ class sfResourceSerializerXml extends sfResourceSerializer
   protected function formatXmlError($error)
   {
     $return  = "\n\n";
-    
+
     switch ($error->level)
     {
       case LIBXML_ERR_WARNING:
@@ -116,11 +116,26 @@ class sfResourceSerializerXml extends sfResourceSerializer
       {
         // If the node is neither Array, nor any collection of data. Test also for empty or space only SimpleXMLElement
         if (
-                (!is_array($item) && (!is_object($item))) ||
-                ($item instanceof SimpleXMLElement &&
-                        (count((array) $item) < 1 || (trim((string)$item) === '') )
-                )
-           )
+          (
+            !is_array($item)
+            &&
+            !is_object($item)
+          )
+          ||
+          (
+            $item instanceof SimpleXMLElement
+            &&
+            (
+              count((array) $item) < 1
+              ||
+              (
+                count((array) $item) == 1
+                &&
+                trim((string)$item) === ''
+              )
+            )
+          )
+        )
         {
           $item = trim((string)$item);
           unset($data[$name]);
