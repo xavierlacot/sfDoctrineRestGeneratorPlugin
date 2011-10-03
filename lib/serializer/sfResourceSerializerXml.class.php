@@ -114,40 +114,32 @@ class sfResourceSerializerXml extends sfResourceSerializer
     {
       foreach ($data as $name => $item)
       {
-        // If the node is neither Array, nor any collection of data. Test also for empty or space only SimpleXMLElement
-        if (
-          (
-            !is_array($item)
-            &&
-            !is_object($item)
-          )
-          ||
-          (
-            $item instanceof SimpleXMLElement
-            &&
-            (
-              count((array) $item) < 1
-              ||
-              (
-                count((array) $item) == 1
-                &&
-                trim((string)$item) === ''
-              )
-            )
-          )
-        )
-        {
-          $item = trim((string)$item);
-          unset($data[$name]);
+        unset($data[$name]);
+        $unserialized = $this->unserializeToArray($item, true);
 
-          if ('' != $item)
-          {
-            $data[sfInflector::underscore($name)] = $this->unserializeToArray($item, true);
-          }
+        if ($item instanceof SimpleXMLElement)
+        {
+          $array = (array) $item;
+          $array2 = (array) $item;
+          $first = array_pop($array2);
+          $single_xml_string = (count($array) < 1) || (count($array) == 1 && is_string($first) && trim($first) === '');
         }
         else
         {
-          $data[$name] = $this->unserializeToArray($item, true);
+          $single_xml_string = false;
+        }
+
+        if ($single_xml_string)
+        {
+          $data[sfInflector::underscore($name)] = trim(array_pop($unserialized));
+        }
+        elseif (is_string($unserialized))
+        {
+          $data[sfInflector::underscore($name)] = $unserialized;
+        }
+        else
+        {
+          $data[$name] = $unserialized;
         }
       }
     }
