@@ -825,7 +825,16 @@ class sfDoctrineRestGenerator extends sfGenerator
 
         if (null != $sub_validators)
         {
-          $validators .= $spaces.'\''.$alias.'\' => '.$sub_validators.",\n";
+          if (Doctrine_Relation::MANY == $relation->getType())
+          {
+            // 1-n, on the other side
+            $validators .= $spaces.'\''.$alias.'\' => array(\''
+              .$relation->getTable()->getComponentName().'\' => '.$sub_validators."),\n";
+          }
+          else
+          {
+            $validators .= $spaces.'\''.$alias.'\' => '.$sub_validators.",\n";
+          }
         }
       }
     }
