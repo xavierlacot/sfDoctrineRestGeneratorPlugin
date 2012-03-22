@@ -46,6 +46,7 @@
     }
 
     $this->queryExecute($params);
+    $isset_pk = null;
 <?php $primaryKeys = $this->getPrimaryKeys(); ?>
 <?php foreach ($primaryKeys as $primaryKey): ?>
     $isset_pk = (!isset($isset_pk) || $isset_pk) && isset($params['<?php echo $primaryKey ?>']);
