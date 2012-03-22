@@ -4,10 +4,10 @@
   * @param bool $absolute absolute url
   * @return string the generated url
   **/
-  protected function getUrlForAction($route_name='index', $absolute=true){
+  protected function getUrlForAction($route_name='show', $absolute=true){
 
 
-    $route_parameters = (in_array($route_name,array('show','delete'))?$this->object->identifier():'');
+    $route_parameters = (in_array($route_name,array('show'))?$this->object->identifier():'');
 
 
     return $this->getController()->genUrl(
