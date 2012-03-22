@@ -49,7 +49,7 @@
     $isset_pk = null;
 <?php $primaryKeys = $this->getPrimaryKeys(); ?>
 <?php foreach ($primaryKeys as $primaryKey): ?>
-    $isset_pk = (!isset($isset_pk) || $isset_pk) && isset($params['<?php echo $primaryKey ?>']);
+    $isset_pk = ((null === $isset_pk) || $isset_pk) && isset($params['<?php echo $primaryKey ?>']);
 <?php endforeach; ?>
     if ($isset_pk && count($this->objects) == 0)
     {

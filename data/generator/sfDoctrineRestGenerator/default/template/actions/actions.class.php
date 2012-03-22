@@ -42,6 +42,8 @@ class <?php echo $this->getGeneratedModuleName() ?>Actions extends <?php echo $t
 
 <?php include dirname(__FILE__).'/../../parts/getUpdateValidators.php' ?>
 
+<?php include dirname(__FILE__).'/../../parts/getUrlForAction.php' ?>
+
 <?php include dirname(__FILE__).'/../../parts/indexAction.php' ?>
 
 <?php include dirname(__FILE__).'/../../parts/parsePayload.php' ?>
@@ -72,6 +74,4 @@ class <?php echo $this->getGeneratedModuleName() ?>Actions extends <?php echo $t
 <?php include dirname(__FILE__).'/../../parts/validateShow.php' ?>
 
 <?php include dirname(__FILE__).'/../../parts/validateUpdate.php' ?>
-
-<?php include dirname(__FILE__) . '/../../parts/getUrlForAction.php' ?>
 }

@@ -1,22 +1,29 @@
   /**
-  * generate the url to another action of the module
-  * @param string $route_name the route name to generate (index|show|delete|create)
-  * @param bool $absolute absolute url
+  * Generates the url to an other action of the module
+  * @param string $action the action to which a url must gbe generated
+  *                       (index|show|delete|create)
+  * @param bool $absolute whether or not to generate an absolute url
   * @return string the generated url
   **/
-  protected function getUrlForAction($route_name='show', $absolute=true){
-
-
-    $route_parameters = (in_array($route_name,array('show'))?$this->object->identifier():'');
-
+  protected function getUrlForAction($action = 'show', $absolute = true)
+  {
+    if ($action == 'show')
+    {
+      $route_parameters = $this->object->identifier();
+    }
+    else
+    {
+      $route_parameters = '';
+    }
 
     return $this->getController()->genUrl(
-       array_merge(array(
-        'sf_route' => '<?php echo $this->getModuleName(); ?>_show',
-        'sf_format' => $this->getFormat(),
-        ), $route_parameters
-       ),$absolute);
-
-
+      array_merge(
+        array(
+          'sf_route' => '<?php echo $this->getModuleName(); ?>_'.$action,
+          'sf_format' => $this->getFormat(),
+        ),
+        $route_parameters
+      ),
+      $absolute
+    );
   }
-
