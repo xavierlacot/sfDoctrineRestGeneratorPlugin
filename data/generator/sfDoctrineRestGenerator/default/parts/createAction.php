@@ -53,5 +53,6 @@
 
     $this->object = $this->createObject();
     $this->updateObjectFromRequest($content);
+    $this->getResponse()->setStatusCode(201);
     return $this->doSave();
   }
