@@ -32,7 +32,7 @@ $pk = current($this->getPrimaryKeys());
 
     // retrieve the objects related to these primary keys
     $relation_name = '<?php echo $embed_relation ?>';
-    $rel = Doctrine::getTable($this->model)->getRelation($relation_name);
+    $rel = Doctrine_Core::getTable($this->model)->getRelation($relation_name);
     $query = $rel->getTable()->createQuery();
     $dql = $rel->getRelationDql(count($list), 'collection');
     $collection = $query->query($dql, $list, Doctrine_Core::HYDRATE_ARRAY);

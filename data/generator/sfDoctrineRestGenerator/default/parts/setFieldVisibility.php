@@ -46,7 +46,7 @@ $object_additional_fields = $this->configuration->getValue('get.object_additiona
     $relation_types = array(
 <?php foreach (array_keys($embedded_relations_hide) as $relation_name): ?>
 <?php
-$relation = Doctrine::getTable($this->getModelClass())->getRelation($relation_name);
+$relation = Doctrine_Core::getTable($this->getModelClass())->getRelation($relation_name);
 ?>
   '<?php echo $relation_name ?>' => <?php echo var_export(Doctrine_Relation::MANY == $relation->getType()) ?>,
 <?php endforeach; ?>
