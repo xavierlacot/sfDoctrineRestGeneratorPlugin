@@ -55,5 +55,7 @@
 
     // update and save it
     $this->updateObjectFromRequest($content);
+
+    $this->getResponse()->setStatusCode(204);
     return $this->doSave();
   }
