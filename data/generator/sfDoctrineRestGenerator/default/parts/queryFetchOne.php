@@ -12,6 +12,6 @@
         'sfDoctrineRestGenerator.filter_result',
         array()
       ),
-      $this->query($params)->fetchOne(array(), Doctrine::HYDRATE_ARRAY)
+      $this->query($params)->fetchOne(array(), Doctrine_Core::HYDRATE_ARRAY)
     )->getReturnValue());
   }
