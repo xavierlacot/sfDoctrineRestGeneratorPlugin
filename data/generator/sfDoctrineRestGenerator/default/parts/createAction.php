@@ -54,5 +54,7 @@
     $this->object = $this->createObject();
     $this->updateObjectFromRequest($content);
     $this->getResponse()->setStatusCode(201);
-    return $this->doSave();
+    $this->doSave();
+    $this->getResponse()->setHttpHeader('Location', $this->getUrlForAction('show', false));
+    return sfView::NONE;
   }
