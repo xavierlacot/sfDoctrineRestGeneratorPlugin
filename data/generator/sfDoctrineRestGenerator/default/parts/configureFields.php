@@ -24,11 +24,14 @@ foreach ($fields as $field => $configuration)
     foreach ($this->objects as $i => $object)
     {
 <?php foreach ($fields as $field => $configuration): ?>
-<?php if (isset($configuration['date_format']) || isset($configuration['tag_name'])): ?>
+<?php if (isset($configuration['date_format']) || isset($configuration['tag_name']) || isset($configuration['type'])): ?>
       if (isset($object['<?php echo $field ?>']))
       {
 <?php if (isset($configuration['date_format'])): ?>
         $object['<?php echo $field ?>'] = date('<?php echo $configuration['date_format'] ?>', strtotime($object['<?php echo $field ?>']));
+<?php endif; ?>
+<?php if (isset($configuration['type'])): ?>
+	     $object['<?php echo $field ?>'] = is_null($object['<?php echo $field ?>']) ? null : (<?php echo $configuration['type'] ?>) $object['<?php echo $field ?>'];
 <?php endif; ?>
 <?php if (isset($configuration['tag_name'])): ?>
         $object['<?php echo $configuration['tag_name'] ?>'] = $object['<?php echo $field ?>'];
