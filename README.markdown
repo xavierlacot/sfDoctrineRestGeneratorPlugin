@@ -222,6 +222,7 @@ decoration options that are used during the (de-)serialization. It might be:
 
   * `date_format`: the date format to use when formatting the field. This must be a format acceptable for the date() function,
   * `tag_name`: the tag name to use for displaying this field. For instance, you might want to associate the title of the post to the key "post_title", and not "title".
+  * `type`: the type to use for displaying this field. All [php cast keywords](http://www.php.net/manual/en/language.types.type-juggling.php#language.types.typecasting) are supported, null values are retained.
 
 
 #### formats_enabled
