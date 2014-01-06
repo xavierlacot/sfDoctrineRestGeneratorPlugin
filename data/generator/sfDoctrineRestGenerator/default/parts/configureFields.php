@@ -13,7 +13,7 @@ $specific_configuration_directives = false;
 
 foreach ($fields as $field => $configuration)
 {
-  if (isset($configuration['date_format']) || isset($configuration['tag_name']))
+  if (isset($configuration['date_format']) || isset($configuration['tag_name']) || isset($configuration['type']))
   {
     $specific_configuration_directives = true;
     continue;
