@@ -10,7 +10,7 @@
         $payload_array = $serializer->unserialize($payload);
       }
 
-      if (!isset($payload_array) || !$payload_array)
+      if (!isset($payload_array) || $payload_array === false)
       {
         throw new sfException(sprintf('Could not parse payload, obviously not a valid %s data!', $format));
       }
