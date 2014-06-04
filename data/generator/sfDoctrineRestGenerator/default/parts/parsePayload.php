@@ -12,7 +12,7 @@
 
       if (!isset($payload_array) || $payload_array === false)
       {
-        throw new sfException(sprintf('Could not parse payload, obviously not a valid %s data!', $format));
+        throw new sfException(sprintf('Could not parse payload, not valid %s data', $format));
       }
 
       $filter_params = <?php var_export(array_flip(array_merge(
