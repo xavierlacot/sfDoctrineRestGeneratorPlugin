@@ -28,46 +28,7 @@ foreach ($embed_relations as $relation_name)
 
       ->leftJoin($this->model.'.<?php echo $embed_relation ?> <?php echo $embed_relation ?>')<?php endif; ?><?php endforeach; ?>;
 
-<?php
-$max_items = $this->configuration->getValue('get.max_items');
-if ($max_items > 0):
-?>
-    $limit = <?php echo $max_items; ?>;
-
-<?php endif; ?>
-<?php
-$pagination_custom_page_size = $this->configuration->getValue('get.pagination_custom_page_size');
-$pagination_enabled = $this->configuration->getValue('get.pagination_enabled');
-$pagination_page_size = $this->configuration->getValue('get.pagination_page_size'); ?>
-<?php if ($pagination_enabled): ?>
-    if (!isset($params['page']))
-    {
-      $params['page'] = 1;
-    }
-
-    $page_size = <?php echo $pagination_page_size; ?>;
-<?php if ($pagination_custom_page_size): ?>
-
-    if (isset($params['page_size']))
-    {
-      $page_size = $params['page_size'];
-      unset($params['page_size']);
-    }
-
-<?php endif; ?>
-<?php if ($max_items > 0): ?>
-    $limit = min($page_size, $limit);
-    $page_size = $limit;
-<?php else: ?>
-    $limit = $page_size;
-<?php endif; ?>
-    $q->offset(($params['page'] - 1) * $page_size);
-    unset($params['page']);
-<?php endif; ?>
-<?php if ($max_items > 0 || $pagination_enabled): ?>
-    $q->limit($limit);
-<?php endif; ?>
-
+    $this->queryPagination($q, $params);
 <?php $sort_custom = $this->configuration->getValue('get.sort_custom'); ?>
 <?php $sort_default = $this->configuration->getValue('get.sort_default'); ?>
 <?php if ($sort_default && count($sort_default) == 2): ?>
